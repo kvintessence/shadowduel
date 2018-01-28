@@ -30,7 +30,7 @@ function utility.areEqual(first, second)
     -- variables can reference the same table object
     if first == second then return true end
 
-    -- as well as tables which have the metamethod `__eq`
+    -- as well as tables which have the meta method `__eq`
     local firstMetaTable = getmetatable(first)
     if firstMetaTable and firstMetaTable.__eq then return first == second end
 
@@ -75,6 +75,22 @@ function utility.deepCopy(valueToCopy)
 
     setmetatable(newCopy, metaTable)
     return newCopy
+end
+
+function utility.appendToArray(array, value)
+    array[#array + 1] = value
+    return array
+end
+
+function utility.removeFromArray(array, valueToBeRemove)
+    for key, value in pairs(array) do
+        if value == valueToBeRemove then
+            array[key] = nil
+            return array
+        end
+    end
+
+    return array
 end
 
 return utility

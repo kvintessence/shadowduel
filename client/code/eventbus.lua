@@ -16,19 +16,19 @@ end
 
 function eventBus.EventBus:subscribe(eventName, handler)
     local eventHandlers = self:__handlersForEventName__(eventName)
-    eventHandlers[#eventHandlers + 1] = utility.createWeakRef(handler)
+    utility.appendToArray(eventHandlers, utility.createWeakRef(handler))
 end
 
 function eventBus.EventBus:post(eventName)
     local eventHandlers = self:__handlersForEventName__(eventName)
 
-    for index, handlerWeakRef in ipairs(eventHandlers) do
+    for key, handlerWeakRef in pairs(eventHandlers) do
         local handler = handlerWeakRef()
 
         if handler then
             handler()
         else
-            eventHandlers[index] = nil
+            eventHandlers[key] = nil
         end
     end
 end

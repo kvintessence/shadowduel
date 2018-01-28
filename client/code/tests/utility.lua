@@ -80,4 +80,26 @@ function tests.deepCopy()
     assert(not utility.areEqual(oldValue, newValue))
 end
 
+function tests.appendToArray()
+    local array = { 1, 2, 3 }
+    utility.appendToArray(array, 4)
+    assert(utility.areEqual(array, { 1, 2, 3, 4 }), "New value was not added.")
+end
+
+function tests.removeFromArray()
+    local array = { 1, 2, 3 }
+
+    utility.removeFromArray(array, 4)
+    assert(utility.areEqual(array, { 1, 2, 3 }), "Array should be the same as before.")
+
+    utility.removeFromArray(array, 2)
+    local sum = 0
+    for _, value in pairs(array) do sum = sum + value end
+    assert(sum == 4, "Value not removed.")
+
+    utility.removeFromArray(array, 1)
+    utility.removeFromArray(array, 3)
+    assert(utility.areEqual(array, { }), "Values were not removed.")
+end
+
 return tests
