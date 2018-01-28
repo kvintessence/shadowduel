@@ -16,19 +16,19 @@ end
 
 function eventBus.EventBus:subscribe(eventName, handler)
     local eventHandlers = self:__handlersForEventName__(eventName)
-    table.insert(eventHandlers, utility.createWeakRef(handler))
+    eventHandlers[utility.createWeakRef(handler)] = true  -- using as a set
 end
 
 function eventBus.EventBus:post(eventName)
     local eventHandlers = self:__handlersForEventName__(eventName)
 
-    for key, handlerWeakRef in pairs(eventHandlers) do
+    for handlerWeakRef, _ in pairs(eventHandlers) do
         local handler = handlerWeakRef()
 
         if handler then
             handler()
         else
-            eventHandlers[key] = nil
+            eventHandlers[handlerWeakRef] = nil
         end
     end
 end
