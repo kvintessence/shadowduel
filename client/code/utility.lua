@@ -77,20 +77,4 @@ function utility.deepCopy(valueToCopy)
     return newCopy
 end
 
-function utility.appendToArray(array, value)
-    array[#array + 1] = value
-    return array
-end
-
-function utility.removeFromArray(array, valueToBeRemove)
-    for key, value in pairs(array) do
-        if value == valueToBeRemove then
-            array[key] = nil
-            return array
-        end
-    end
-
-    return array
-end
-
 return utility

@@ -16,7 +16,7 @@ end
 
 function eventBus.EventBus:subscribe(eventName, handler)
     local eventHandlers = self:__handlersForEventName__(eventName)
-    utility.appendToArray(eventHandlers, utility.createWeakRef(handler))
+    table.insert(eventHandlers, utility.createWeakRef(handler))
 end
 
 function eventBus.EventBus:post(eventName)
