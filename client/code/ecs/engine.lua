@@ -35,7 +35,7 @@ function module.Engine:update(delta)
 end
 
 function module.Engine:entitiesWithComponent(component)
-    return self.entitiesWithComponents({ component })
+    return self:entitiesWithComponents({ component })
 end
 
 function module.Engine:entitiesWithComponents(components)

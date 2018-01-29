@@ -5,9 +5,38 @@ local ecs = require("code/ecs/ecs")
 
 local tests = {}
 
+-- utility structures
+
 local TestComponent1 = class("TestComponent1", ecs.Component)
 local TestComponent2 = class("TestComponent2", ecs.Component)
 local NotAComponent = class("NotAComponent")
+
+local TestSystem1 = class("TestSystem1", ecs.System)
+
+function TestSystem1:componentTypes()
+    return { TestComponent1 }
+end
+
+function TestSystem1:update(entities, delta)
+    for _, entity in ipairs(entities) do
+        entity:get(TestComponent1).test1 = true
+    end
+end
+
+local TestSystem12 = class("TestSystem12", ecs.System)
+
+function TestSystem12:componentTypes()
+    return { TestComponent1, TestComponent2 }
+end
+
+function TestSystem12:update(entities, delta)
+    for _, entity in ipairs(entities) do
+        entity:get(TestComponent1).test2 = true
+        entity:get(TestComponent2).test2 = true
+    end
+end
+
+-- tests
 
 function tests.invalidComponentAddition()
     local entity = ecs.Entity:new()
@@ -61,6 +90,44 @@ function tests.getAllComponents()
 
     entity:remove(component1)
     assert(utility.areEqual(entity:all(), { component2 }), "This entity should have only second component.")
+end
+
+function tests.entitiesWithComponents()
+    local entity1 = ecs.Entity:new()
+    entity1:add(TestComponent1:new())
+
+    local entity12 = ecs.Entity:new()
+    entity12:add(TestComponent1:new())
+    entity12:add(TestComponent2:new())
+
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponent(TestComponent1)))
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponent(TestComponent2)))
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponents({ TestComponent1, TestComponent2 })))
+
+    ecs.default:addEntity(entity1)
+
+    assert(utility.areEqual({ entity1 }, ecs.default:entitiesWithComponent(TestComponent1)))
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponent(TestComponent2)))
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponents({ TestComponent1, TestComponent2 })))
+
+    ecs.default:addEntity(entity12)
+
+    local withComponent1 = ecs.default:entitiesWithComponent(TestComponent1)
+    assert(utility.areEqual({ entity1, entity12 }, withComponent1) or utility.areEqual({ entity12, entity1 }, withComponent1))
+    assert(utility.areEqual({ entity12 }, ecs.default:entitiesWithComponent(TestComponent2)))
+    assert(utility.areEqual({ entity12 }, ecs.default:entitiesWithComponents({ TestComponent1, TestComponent2 })))
+
+    ecs.default:removeEntity(entity1)
+
+    assert(utility.areEqual({ entity12 }, ecs.default:entitiesWithComponent(TestComponent1)))
+    assert(utility.areEqual({ entity12 }, ecs.default:entitiesWithComponent(TestComponent2)))
+    assert(utility.areEqual({ entity12 }, ecs.default:entitiesWithComponents({ TestComponent1, TestComponent2 })))
+
+    ecs.default:removeEntity(entity12)
+
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponent(TestComponent1)))
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponent(TestComponent2)))
+    assert(utility.areEqual({}, ecs.default:entitiesWithComponents({ TestComponent1, TestComponent2 })))
 end
 
 return tests
