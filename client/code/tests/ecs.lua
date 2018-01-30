@@ -130,4 +130,40 @@ function tests.entitiesWithComponents()
     assert(utility.areEqual({}, ecs.default:entitiesWithComponents({ TestComponent1, TestComponent2 })))
 end
 
+function tests.systemUpdates()
+    local entity1 = ecs.Entity:new()
+    entity1:add(TestComponent1:new())
+
+    local entity12 = ecs.Entity:new()
+    entity12:add(TestComponent1:new())
+    entity12:add(TestComponent2:new())
+
+    local world = ecs.Engine:new()
+
+    world:addEntity(entity1)
+    world:addEntity(entity12)
+
+    world:update(0.018)
+
+    assert(not entity1:get(TestComponent1).test1 and not entity1:get(TestComponent1).test2)
+    assert(not entity12:get(TestComponent1).test1 and not entity12:get(TestComponent1).test2)
+    assert(not entity12:get(TestComponent2).test1 and not entity12:get(TestComponent2).test2)
+
+    local system1 = TestSystem1:new()
+    world:addSystem(system1)
+    world:update(0.018)
+
+    assert(entity1:get(TestComponent1).test1 and not entity1:get(TestComponent1).test2)
+    assert(entity12:get(TestComponent1).test1 and not entity12:get(TestComponent1).test2)
+    assert(not entity12:get(TestComponent2).test1 and not entity12:get(TestComponent2).test2)
+
+    local system12 = TestSystem12:new()
+    world:addSystem(system12)
+    world:update(0.018)
+
+    assert(entity1:get(TestComponent1).test1 and not entity1:get(TestComponent1).test2)
+    assert(entity12:get(TestComponent1).test1 and entity12:get(TestComponent1).test2)
+    assert(not entity12:get(TestComponent2).test1 and entity12:get(TestComponent2).test2)
+end
+
 return tests

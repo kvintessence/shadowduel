@@ -29,7 +29,7 @@ end
 
 function module.Engine:update(delta)
     for system, _ in pairs(self.__systems__) do
-        local filteredComponents = self.entitiesWithComponents(system:componentTypes())
+        local filteredComponents = self:entitiesWithComponents(system:componentTypes())
         system:update(filteredComponents, delta)
     end
 end
