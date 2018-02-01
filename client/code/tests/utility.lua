@@ -1,6 +1,6 @@
 local utility = require("code/utility")
 
-tests = {}
+local tests = {}
 
 function tests:weakReference()
     local value = "value"
