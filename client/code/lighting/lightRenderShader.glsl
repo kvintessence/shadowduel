@@ -2,7 +2,7 @@
 
 extern number xresolution;
 
-//sample from the 1D distance map
+// sample from the 1D distance map
 number sample(vec2 coord, number r, Image u_texture)
 {
     return step(r, Texel(u_texture, coord).r);
@@ -24,8 +24,8 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
     number center = sample(tc, r, texture);
 
     // Multiply the blur amount by our distance from center.
-    //this leads to more blurriness as the shadow "fades away"
-    number blur = (1./xresolution)  * smoothstep(0., 1., r);
+    // this leads to more blurriness as the shadow "fades away"
+    number blur = (1. / xresolution)  * smoothstep(0., 1., r);
 
     // Use a simple gaussian blur.
     number sum = 0.0;

@@ -2,7 +2,7 @@
 
 extern number yresolution;
 
-const float ALPHA_THRESHOLD = 0.01;
+const float ALPHA_THRESHOLD = 0.00001;
 
 vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
 {

@@ -1,87 +1,119 @@
--- This library is a trivial implementation of raycasting point lights for love2d/LÖVE.
--- It is heavily based on mattdesl's libGDX implementation, described here:
---   https://github.com/mattdesl/lwjgl-basics/wiki/2D-Pixel-Perfect-Shadows
+--- This library is a trivial implementation of ray casting point lights for love2d/LÖVE.
+--- It is heavily based on mattdesl's libGDX implementation, described here:
+--- https://github.com/mattdesl/lwjgl-basics/wiki/2D-Pixel-Perfect-Shadows
 
--- The light data is stored here.
-local lightInfos = {}
+--- This library was modified and refactored for my own needs.
+--- Original version can be found here: https://github.com/dylhunn/simple-love-lights
 
-----------------
--- PUBLIC API --
-----------------
+local class = require("lib/middleclass")
 
--- Call this function to add a new light; provide the absolute coordinates, size of
--- the illuminated containing box, and color.
-function addLight(lx, ly, lsize, lr, lg, lb)
+local module = {}
 
-    -- Don't allow multiple lights at the same point.
-    for _, li in ipairs(lightInfos) do
-        if li.x == lx and li.y == ly then return end
-    end
+module.Light = class('lighting/Light')
 
-    local newLight = {
-        x = lx, y = ly, size = lsize, r = lr, g = lg, b = lb,
-        occludersCanvas = love.graphics.newCanvas(lsize, lsize),
-        shadowMapCanvas = love.graphics.newCanvas(lsize, 1),
-        lightRenderCanvas = love.graphics.newCanvas(lsize, lsize),
-    }
+function module.Light:initialize(parameters)
+    parameters = parameters or {}
 
-    table.insert(lightInfos, newLight)
+    self.x = parameters.x or 0.0
+    self.y = parameters.x or 0.0
 
-    return newLight
+    self.radiance = parameters.maxRadiance or 500.0
+    self.maxRadiance = parameters.maxRadiance or self.radiance
+
+    self.red = parameters.red or 255.0
+    self.green = parameters.green or 255.0
+    self.blue = parameters.blue or 255.0
+
+    self.occludersCanvas = love.graphics.newCanvas(self.maxRadiance, self.maxRadiance)
+    self.shadowMapCanvas = love.graphics.newCanvas(self.maxRadiance, 1)
+    self.lightRenderCanvas = love.graphics.newCanvas(self.maxRadiance, self.maxRadiance)
 end
 
--- Clear all lights.
-function clearLights()
-    lightInfos = {}
-end
+--- SETTERS / GETTERS ---
 
--- You must call this from the main draw function, before drawing other objects.
--- Pass in a function that draws all shadow-casting objects to the screen.
--- Also pass in the coordinate transformation from absolute coordinates.
-function drawLights(drawOccludersFn, coordTransX, coordTransY)
-    for i = 1, #lightInfos do
-        drawLight(drawOccludersFn, lightInfos[i], coordTransX, coordTransY)
+function module.Light:setPosition(position, y)
+    if type(position) == "table" then
+        self.x = position[1] or position.x
+        self.y = position[2] or position.y
+    else
+        self.x = position
+        self.y = y
     end
 end
 
-------------------
--- PRIVATE DATA --
-------------------
+function module.Light:getPosition()
+    return self.x, self.y
+end
 
+function module.Light:setRadiance(radiance)
+    self.radiance = math.min(radiance, self.maxRadiance)
+end
 
--- Shader for caculating the 1D shadow map.
+function module.Light:getRadiance()
+    return self.radiance
+end
+
+function module.Light:setMaxRadiance(maxRadiance)
+    self.maxRadiance = maxRadiance
+    self.radiance = math.min(self.radiance, self.maxRadiance)
+end
+
+function module.Light:getMaxRadiance()
+    return self.maxRadiance
+end
+
+function module.Light:setColor(color, green, blue)
+    if type(position) == "table" then
+        self.red = color[1] or color.red
+        self.green = color[2] or color.green
+        self.blue = color[3] or color.blue
+    else
+        self.red = color
+        self.green = green
+        self.blue = blue
+    end
+end
+
+function module.Light:getColor()
+    return self.red, self.green, self.blue
+end
+
+--- DRAWING STUFF ---
+
+--- Shader for calculating the 1D shadow map.
 local shadowMapShader = love.graphics.newShader("code/lighting/shadowMapShader.glsl")
 
--- Shader for rendering blurred lights and shadows.
+--- Shader for rendering blurred lights and shadows.
 local lightRenderShader = love.graphics.newShader("code/lighting/lightRenderShader.glsl")
 
-function drawLight(drawOccludersFn, lightInfo, coordTransX, coordTransY)
-    lightInfo.occludersCanvas:renderTo(function()
+--- Pass in a function that draws all shadow-casting objects to the screen.
+function module.Light:update(drawOccludersFn)
+    self.occludersCanvas:renderTo(function()
         love.graphics.clear()
     end)
-    lightInfo.shadowMapCanvas:renderTo(function()
+    self.shadowMapCanvas:renderTo(function()
         love.graphics.clear()
     end)
-    lightInfo.lightRenderCanvas:renderTo(function()
+    self.lightRenderCanvas:renderTo(function()
         love.graphics.clear()
     end)
 
-    lightRenderShader:send("xresolution", lightInfo.size);
-    shadowMapShader:send("yresolution", lightInfo.size);
+    lightRenderShader:send("xresolution", self.radiance);
+    shadowMapShader:send("yresolution", self.radiance);
 
     -- Upper-left corner of light-casting box.
-    local x = lightInfo.x - (lightInfo.size / 2)-- - coordTransX
-    local y = lightInfo.y - (lightInfo.size / 2)-- - coordTransY
+    local x = self.x - (self.radiance / 2)
+    local y = self.y - (self.radiance / 2)
 
-    --local fullQuad = love.graphics.newQuad(0, 0, lightInfo.size, lightInfo.size, lightInfo.occludersCanvas:getDimensions())
-    --local shadowMapQuad = love.graphics.newQuad(0, 0, lightInfo.size, 1, lightInfo.shadowMapCanvas:getDimensions())
+    local fullQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.occludersCanvas:getDimensions())
+    local shadowMapQuad = love.graphics.newQuad(0, 0, self.radiance, 1, self.shadowMapCanvas:getDimensions())
 
     -- Translating the occluders by the position of the light-casting
     -- box causes only occluders in the box to appear on the canvas.
     love.graphics.push()
     love.graphics.origin()
     love.graphics.translate(-x, -y)
-    lightInfo.occludersCanvas:renderTo(drawOccludersFn)
+    self.occludersCanvas:renderTo(drawOccludersFn)
     love.graphics.pop()
 
     -- We need to un-apply any scrolling coordinate translation, because
@@ -92,30 +124,33 @@ function drawLight(drawOccludersFn, lightInfo, coordTransX, coordTransY)
     love.graphics.origin()
 
     love.graphics.setShader(shadowMapShader)
-    love.graphics.setCanvas(lightInfo.shadowMapCanvas)
-    love.graphics.draw(lightInfo.occludersCanvas, 0, 0)
-    --love.graphics.draw(lightInfo.occludersCanvas, fullQuad, 0, 0)
+    love.graphics.setCanvas(self.shadowMapCanvas)
+    --love.graphics.draw(self.occludersCanvas, 0, 0)
+    love.graphics.draw(self.occludersCanvas, fullQuad, 0, 0)
     love.graphics.setCanvas()
     love.graphics.setShader()
 
     love.graphics.setShader(lightRenderShader)
-    love.graphics.setCanvas(lightInfo.lightRenderCanvas)
-    --love.graphics.draw(lightInfo.shadowMapCanvas, shadowMapQuad, 0, 0, 0, 1, lightInfo.size)
-    love.graphics.draw(lightInfo.shadowMapCanvas, 0, 0, 0, 1, lightInfo.size)
+    love.graphics.setCanvas(self.lightRenderCanvas)
+    --love.graphics.draw(self.shadowMapCanvas, 0, 0, 0, 1, self.radiance)
+    love.graphics.draw(self.shadowMapCanvas, shadowMapQuad, 0, 0, 0, 1, self.radiance)
     love.graphics.setCanvas()
     love.graphics.setShader()
 
     love.graphics.pop()
+end
+
+function module.Light:draw()
+    -- Upper-left corner of light-casting box.
+    local x = self.x - (self.radiance / 2)
+    local y = self.y - (self.radiance / 2)
+
+    local fullQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.occludersCanvas:getDimensions())
 
     love.graphics.setBlendMode("add")
-    love.graphics.setColor(lightInfo.r, lightInfo.g, lightInfo.b, 255)
-    --love.graphics.draw(lightInfo.lightRenderCanvas, fullQuad, x, y + lightInfo.size, 0, 1, -1)
-    love.graphics.draw(lightInfo.lightRenderCanvas, x, y + lightInfo.size, 0, 1, -1)
+    love.graphics.setColor(self.red, self.green, self.blue, 255)
+    love.graphics.draw(self.lightRenderCanvas, fullQuad, x, y + self.radiance, 0, 1, -1)
     love.graphics.setBlendMode("alpha")
 end
 
-return {
-    addLight = addLight,
-    clearLights = clearLights,
-    drawLights = drawLights,
-}
+return module

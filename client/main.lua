@@ -1,5 +1,4 @@
--- Example: Short Example
-local simpleLights = require("code/lighting/simpleLights")
+local lighting = require("code/lighting/simpleLights")
 local gamera = require("lib/gamera")
 
 --local cam = gamera.new(-500,-500,2000,2000)
@@ -23,38 +22,32 @@ function love.keypressed(key, scancode, isrepeat)
     end
 
     if key == "w" then
-        local size = light2.size
-        simpleLights.clearLights()
-        light2 = simpleLights.addLight(450, 250, size + 25, 50, 100, 250)
-        --light2.size = light2.size + 25
+        light2:setRadiance(light2:getRadiance() + 25)
     end
 
     if key == "s" then
-        local size = light2.size
-        simpleLights.clearLights()
-        light2 = simpleLights.addLight(450, 250, size - 25, 50, 100, 250)
-        --light2.size = light2.size - 25
+        light2:setRadiance(light2:getRadiance() - 25)
     end
 end
 
 function love.load()
-    simpleLights.addLight(250, 250, 250, 250, 100, 0)
-    light2 = simpleLights.addLight(450, 250, 650, 50, 100, 250)
+    light2 = lighting.Light:new({ x = 450, y = 250, radiance = 850, red = 50, green = 100, blue = 250 })
 end
 
 function love.update(dt)
     cam:setWindow(0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     --cam:setPosition(love.mouse.getX(), love.mouse.getY())
-    light2.x = love.mouse.getX()
-    light2.y = love.mouse.getY()
+    light2:setPosition(love.mouse.getX(), love.mouse.getY())
 end
 
 function love.draw()
     --love.graphics.clear(100, 100, 100, 255)
 
+    light2:update(drawWorld)
+
     cam:draw(function(l, t, w, h)
-        love.window.setTitle("FPS:" .. love.timer.getFPS() .. ", L2: " .. light2.size)
-        simpleLights.drawLights(drawWorld, l, t)
+        love.window.setTitle("FPS:" .. love.timer.getFPS() .. ", L2: " .. light2.radiance)
+        light2:draw()
         drawWorld()
     end)
 end
