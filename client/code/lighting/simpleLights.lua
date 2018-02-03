@@ -17,7 +17,7 @@ function module.Light:initialize(parameters)
     self.x = parameters.x or 0.0
     self.y = parameters.x or 0.0
 
-    self.radiance = parameters.maxRadiance or 500.0
+    self.radiance = parameters.radiance or 500.0
     self.maxRadiance = parameters.maxRadiance or self.radiance
 
     self.red = parameters.red or 255.0
@@ -99,14 +99,16 @@ function module.Light:update(drawOccludersFn)
     end)
 
     lightRenderShader:send("xresolution", self.radiance);
+    lightRenderShader:send("maxResolution", self.maxRadiance);
     shadowMapShader:send("yresolution", self.radiance);
+    shadowMapShader:send("maxResolution", self.maxRadiance);
 
     -- Upper-left corner of light-casting box.
     local x = self.x - (self.radiance / 2)
     local y = self.y - (self.radiance / 2)
 
-    local fullQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.occludersCanvas:getDimensions())
-    local shadowMapQuad = love.graphics.newQuad(0, 0, self.radiance, 1, self.shadowMapCanvas:getDimensions())
+    local fullQuad = love.graphics.newQuad(0, 0, math.min(self.radiance + 20, self.maxRadiance), self.radiance, self.occludersCanvas:getDimensions())
+    local shadowQuad = love.graphics.newQuad(0, 0, self.radiance, 1, self.shadowMapCanvas:getDimensions())
 
     -- Translating the occluders by the position of the light-casting
     -- box causes only occluders in the box to appear on the canvas.
@@ -125,15 +127,13 @@ function module.Light:update(drawOccludersFn)
 
     love.graphics.setShader(shadowMapShader)
     love.graphics.setCanvas(self.shadowMapCanvas)
-    --love.graphics.draw(self.occludersCanvas, 0, 0)
     love.graphics.draw(self.occludersCanvas, fullQuad, 0, 0)
     love.graphics.setCanvas()
     love.graphics.setShader()
 
     love.graphics.setShader(lightRenderShader)
     love.graphics.setCanvas(self.lightRenderCanvas)
-    --love.graphics.draw(self.shadowMapCanvas, 0, 0, 0, 1, self.radiance)
-    love.graphics.draw(self.shadowMapCanvas, shadowMapQuad, 0, 0, 0, 1, self.radiance)
+    love.graphics.draw(self.shadowMapCanvas, shadowQuad, 0, 0, 0, 1, self.maxRadiance)
     love.graphics.setCanvas()
     love.graphics.setShader()
 
@@ -145,7 +145,7 @@ function module.Light:draw()
     local x = self.x - (self.radiance / 2)
     local y = self.y - (self.radiance / 2)
 
-    local fullQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.occludersCanvas:getDimensions())
+    local fullQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.lightRenderCanvas:getDimensions())
 
     love.graphics.setBlendMode("add")
     love.graphics.setColor(self.red, self.green, self.blue, 255)

@@ -1,6 +1,7 @@
 #define PI 3.14
 
 extern number yresolution;
+extern number maxResolution;
 
 const float ALPHA_THRESHOLD = 0.00001;
 
@@ -11,7 +12,7 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
     // Iterate through the occluder map's y-axis.
     for (number y = 0.0; y < yresolution; y++) {
         // Rectangular to polar
-        vec2 norm = vec2(texture_coords.s, y / yresolution) * 2.0 - 1.0;
+        vec2 norm = vec2(texture_coords.s * (maxResolution / yresolution), y / yresolution) * 2.0 - 1.0;
         number theta = PI * 1.5 + norm.x * PI;
         number r = (1.0 + norm.y) * 0.5;
 
@@ -19,7 +20,7 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
         vec2 coord = vec2(-r * sin(theta), -r * cos(theta)) / 2.0 + 0.5;
 
         // sample the occlusion map
-        vec4 data = Texel(texture, coord);
+        vec4 data = Texel(texture, coord * (yresolution / maxResolution));
 
         // the current distance is how far from the top we've come
         number dst = y / yresolution;

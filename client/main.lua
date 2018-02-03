@@ -31,7 +31,8 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.load()
-    light2 = lighting.Light:new({ x = 450, y = 250, radiance = 850, red = 50, green = 100, blue = 250 })
+    light1 = lighting.Light:new({ x = 250, y = 150, radiance = 500, maxRadiance = 950, red = 250, green = 100, blue = 50 })
+    light2 = lighting.Light:new({ x = 450, y = 250, radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 })
 end
 
 function love.update(dt)
@@ -43,10 +44,12 @@ end
 function love.draw()
     --love.graphics.clear(100, 100, 100, 255)
 
+    light1:update(drawWorld)
     light2:update(drawWorld)
 
     cam:draw(function(l, t, w, h)
-        love.window.setTitle("FPS:" .. love.timer.getFPS() .. ", L2: " .. light2.radiance)
+        love.window.setTitle("FPS:" .. love.timer.getFPS())
+        light1:draw()
         light2:draw()
         drawWorld()
     end)
