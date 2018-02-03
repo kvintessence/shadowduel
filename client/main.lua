@@ -1,5 +1,5 @@
 -- Example: Short Example
-local simpleLights = require("lib/simpleLights")
+local simpleLights = require("code/lighting/simpleLights")
 local gamera = require("lib/gamera")
 
 --local cam = gamera.new(-500,-500,2000,2000)
@@ -23,17 +23,17 @@ function love.keypressed(key, scancode, isrepeat)
     end
 
     if key == "w" then
-        --local size = light2.size
-        --simpleLights.clearLights()
-        --light2 = simpleLights.addLight(450, 250, size + 25, 50, 100, 250)
-        light2.size = light2.size + 25
+        local size = light2.size
+        simpleLights.clearLights()
+        light2 = simpleLights.addLight(450, 250, size + 25, 50, 100, 250)
+        --light2.size = light2.size + 25
     end
 
     if key == "s" then
-        --local size = light2.size
-        --simpleLights.clearLights()
-        --light2 = simpleLights.addLight(450, 250, size - 25, 50, 100, 250)
-        light2.size = light2.size - 25
+        local size = light2.size
+        simpleLights.clearLights()
+        light2 = simpleLights.addLight(450, 250, size - 25, 50, 100, 250)
+        --light2.size = light2.size - 25
     end
 end
 
