@@ -9,6 +9,7 @@ local Rectangle = require("code/components/rectangle").Rectangle
 local Position = require("code/components/position").Position
 local Occluder = require("code/components/occluder").Occluder
 local Light = require("code/components/light").Light
+local Image = require("code/components/image").Image
 
 -------------------
 
@@ -57,6 +58,7 @@ function love.load()
     light2 = tinyECS.addEntity(world, {
         [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
         [Position] = Position:new({ x = 450, y = 250 }),
+        [Image] = Image:new({ filename = "assets/highwayman.png", scale = 0.2 }),
     })
 end
 

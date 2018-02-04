@@ -5,6 +5,7 @@ local tinyECS = require("lib/tiny-ecs")
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
 local Position = require("code/components/position").Position
+local Image = require("code/components/image").Image
 local Light = require("code/components/light").Light
 
 local module = {}
@@ -21,7 +22,7 @@ function module.DrawWorldSystem:initialize(parameters)
 end
 
 function module.DrawWorldSystem:filter(entity)
-    return entity[Position] and (entity[Circle] or entity[Rectangle] or entity[Light])
+    return entity[Position] and (entity[Circle] or entity[Rectangle] or entity[Light] or entity[Image])
 end
 
 function module.DrawWorldSystem:preProcess()
@@ -34,11 +35,18 @@ end
 function module.DrawWorldSystem:process(entity)
     if entity[Light] then
         table.insert(self.lightsToDraw, entity)
-        return
     end
 
     self.camera:draw(function(l, t, w, h)
-        if entity[Circle] then
+        if entity[Image] then
+            local image = entity[Image]
+            local position = entity[Position]
+
+            local x = position.x - 0.5 * image.image:getWidth() * image.scale
+            local y = position.y - 0.5 * image.image:getHeight() * image.scale
+
+            love.graphics.draw(image.image, x, y, position.rotation, image.scale)
+        elseif entity[Circle] then
             local circle = entity[Circle]
             local position = entity[Position]
             love.graphics.circle("fill", position.x, position.y, circle.radius)
