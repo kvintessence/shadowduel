@@ -9,11 +9,6 @@ local class = require("lib/middleclass")
 
 local module = {}
 
-local defaultMaxRadiance = 2000
-local canvases = {
-    maxRadiance = defaultMaxRadiance,
-}
-
 module.Light = class('lighting/Light')
 
 function module.Light:initialize(parameters)
@@ -23,14 +18,16 @@ function module.Light:initialize(parameters)
     self.y = parameters.x or 0.0
 
     self.radiance = parameters.radiance or 500.0
+    self.maxRadiance = parameters.maxRadiance or self.radiance
 
     self.red = parameters.red or 255.0
     self.green = parameters.green or 255.0
     self.blue = parameters.blue or 255.0
 
-    self.occludersCanvas = love.graphics.newCanvas(canvases.maxRadiance, canvases.maxRadiance)
-    self.shadowMapCanvas = love.graphics.newCanvas(canvases.maxRadiance, 1)
-    self.lightRenderCanvas = love.graphics.newCanvas(canvases.maxRadiance, canvases.maxRadiance)
+    self.occludersCanvas = love.graphics.newCanvas(self.maxRadiance, self.maxRadiance)
+    self.shadowMapCanvas = love.graphics.newCanvas(self.maxRadiance, 1)
+    -- reusing the same canvas because we can; just don't forget to clear it
+    self.lightRenderCanvas = self.occludersCanvas
 end
 
 --- SETTERS / GETTERS ---
@@ -50,11 +47,29 @@ function module.Light:getPosition()
 end
 
 function module.Light:setRadiance(radiance)
-    self.radiance = math.min(radiance, canvases.maxRadiance)
+    self.radiance = math.min(radiance, self.maxRadiance)
 end
 
 function module.Light:getRadiance()
     return self.radiance
+end
+
+function module.Light:setMaxRadiance(maxRadiance)
+    local shouldRecreateCanvas = maxRadiance > self.maxRadiance
+
+    self.maxRadiance = maxRadiance
+    self.radiance = math.min(self.radiance, self.maxRadiance)
+
+    if shouldRecreateCanvas then
+        self.occludersCanvas = love.graphics.newCanvas(self.maxRadiance, self.maxRadiance)
+        self.shadowMapCanvas = love.graphics.newCanvas(self.maxRadiance, 1)
+        -- reusing the same canvas because we can; just don't forget to clear it
+        self.lightRenderCanvas = self.occludersCanvas
+    end
+end
+
+function module.Light:getMaxRadiance()
+    return self.maxRadiance
 end
 
 function module.Light:setColor(color, green, blue)
@@ -89,22 +104,19 @@ local lightRenderShader = love.graphics.newShader("code/lighting/lightRenderShad
 
 --- Pass in a function that draws all shadow-casting objects to the screen.
 function module.Light:update(drawOccludersFn)
-    self.occludersCanvas:renderTo(love.graphics.clear)
-    self.shadowMapCanvas:renderTo(love.graphics.clear)
-    self.lightRenderCanvas:renderTo(love.graphics.clear)
-
     lightRenderShader:send("resolutionX", self.radiance);
-    lightRenderShader:send("canvasSize", canvases.maxRadiance);
+    lightRenderShader:send("canvasSize", self.maxRadiance);
     shadowMapShader:send("resolutionY", self.radiance);
-    shadowMapShader:send("canvasSize", canvases.maxRadiance);
+    shadowMapShader:send("canvasSize", self.maxRadiance);
 
     -- Upper-left corner of light-casting box.
     local left, top = leftTopLightingBoxPosition(self)
-    local fullQuad = love.graphics.newQuad(0, 0, math.min(self.radiance + 20, canvases.maxRadiance), self.radiance, self.occludersCanvas:getDimensions())
+    local fullQuad = love.graphics.newQuad(0, 0, math.min(self.radiance + 20, self.maxRadiance), self.radiance, self.occludersCanvas:getDimensions())
     local shadowQuad = love.graphics.newQuad(0, 0, self.radiance, 1, self.shadowMapCanvas:getDimensions())
 
     -- Translating the occluders by the position of the light-casting
     -- box causes only occluders in the box to appear on the canvas.
+    self.occludersCanvas:renderTo(love.graphics.clear)
     love.graphics.push()
     love.graphics.origin()
     love.graphics.translate(-left, -top)
@@ -118,15 +130,17 @@ function module.Light:update(drawOccludersFn)
     love.graphics.push()
     love.graphics.origin()
 
+    self.shadowMapCanvas:renderTo(love.graphics.clear)
     love.graphics.setShader(shadowMapShader)
     love.graphics.setCanvas(self.shadowMapCanvas)
     love.graphics.draw(self.occludersCanvas, fullQuad, 0, 0)
     love.graphics.setCanvas()
     love.graphics.setShader()
 
+    self.lightRenderCanvas:renderTo(love.graphics.clear)
     love.graphics.setShader(lightRenderShader)
     love.graphics.setCanvas(self.lightRenderCanvas)
-    love.graphics.draw(self.shadowMapCanvas, shadowQuad, 0, 0, 0, 1, canvases.maxRadiance)
+    love.graphics.draw(self.shadowMapCanvas, shadowQuad, 0, 0, 0, 1, self.maxRadiance)
     love.graphics.setCanvas()
     love.graphics.setShader()
 
