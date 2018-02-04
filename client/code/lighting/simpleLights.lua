@@ -2,7 +2,7 @@
 --- It is heavily based on mattdesl's libGDX implementation, described here:
 --- https://github.com/mattdesl/lwjgl-basics/wiki/2D-Pixel-Perfect-Shadows
 
---- This library was modified and refactored for my own needs.
+--- Quint: This library was modified and refactored for my own needs.
 --- Original version can be found here: https://github.com/dylhunn/simple-love-lights
 
 local class = require("lib/middleclass")
@@ -97,10 +97,10 @@ end
 --- DRAWING STUFF ---
 
 --- Shader for calculating the 1D shadow map.
-local shadowMapShader = love.graphics.newShader("code/lighting/shadowMapShader.glsl")
+local shadowMapShader = love.graphics.newShader("code/lighting/shaders/shadowMapShader.glsl")
 
 --- Shader for rendering blurred lights and shadows.
-local lightRenderShader = love.graphics.newShader("code/lighting/lightRenderShader.glsl")
+local lightRenderShader = love.graphics.newShader("code/lighting/shaders/lightRenderShader.glsl")
 
 --- Pass in a function that draws all shadow-casting objects to the screen.
 function module.Light:update(drawOccludersFn)
