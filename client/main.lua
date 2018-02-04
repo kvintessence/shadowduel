@@ -1,14 +1,14 @@
-local lighting = require("code/lighting/simpleLights")
-local gamera = require("lib/gamera")
+local tinyECS = require("lib/tiny-ecs")
 
---local cam = gamera.new(-500,-500,2000,2000)
-local cam = gamera.new(0, 0, 2000, 2000)
+local DrawWorldSystem = require("code/systems/drawWorld").DrawWorldSystem
+local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSystem
+local OccludersSystem = require("code/systems/occluders").OccludersSystem
 
-local drawWorld = function()
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", 200, 200, 30)
-    love.graphics.rectangle("fill", 300, 100, 50, 50)
-end
+local Circle = require("code/components/circle").Circle
+local Rectangle = require("code/components/rectangle").Rectangle
+local Position = require("code/components/position").Position
+local Occluder = require("code/components/occluder").Occluder
+local Light = require("code/components/light").Light
 
 -------------------
 
@@ -22,35 +22,53 @@ function love.keypressed(key, scancode, isrepeat)
     end
 
     if key == "w" then
-        light2:setRadiance(light2:getRadiance() + 25)
+        light2[Light]:setRadiance(light2[Light]:getRadiance() + 25)
     end
 
     if key == "s" then
-        light2:setRadiance(light2:getRadiance() - 25)
+        light2[Light]:setRadiance(light2[Light]:getRadiance() - 25)
     end
 end
 
 function love.load()
-    light1 = lighting.Light:new({ x = 250, y = 150, radiance = 500, maxRadiance = 950, red = 250, green = 100, blue = 50 })
-    light2 = lighting.Light:new({ x = 450, y = 250, radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 })
+    world = tinyECS.world()
+
+    local occluders = tinyECS.addSystem(world, OccludersSystem:new())
+    tinyECS.addSystem(world, LightUpdaterSystem:new(occluders))
+    tinyECS.addSystem(world, DrawWorldSystem:new({ left = 0, top = 0, width = 2000, height = 2000 }))
+
+    tinyECS.addEntity(world, {
+        [Position] = Position:new({ x = 300, y = 100 }),
+        [Circle] = Circle:new({ radius = 25 }),
+        [Occluder] = Occluder:new(),
+    })
+
+    tinyECS.addEntity(world, {
+        [Position] = Position:new({ x = 200, y = 200 }),
+        [Rectangle] = Rectangle:new({ width = 50, height = 75 }),
+        [Occluder] = Occluder:new(),
+    })
+
+    tinyECS.addEntity(world, {
+        [Light] = Light:new({ radiance = 500, maxRadiance = 950, red = 250, green = 100, blue = 50 }),
+        [Position] = Position:new({ x = 250, y = 150 }),
+    })
+
+    light2 = tinyECS.addEntity(world, {
+        [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
+        [Position] = Position:new({ x = 450, y = 250 }),
+    })
 end
 
 function love.update(dt)
-    cam:setWindow(0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-    --cam:setPosition(love.mouse.getX(), love.mouse.getY())
-    light2:setPosition(love.mouse.getX(), love.mouse.getY())
+    light2[Position]:set(love.mouse.getX(), love.mouse.getY())
+
+    local fps = "FPS:" .. love.timer.getFPS()
+    local systemCount = ", systems: " .. tinyECS.getSystemCount(world)
+    local entityCount = ", entities: " .. tinyECS.getEntityCount(world)
+    love.window.setTitle(fps .. systemCount .. entityCount)
 end
 
 function love.draw()
-    --love.graphics.clear(100, 100, 100, 255)
-
-    light1:update(drawWorld)
-    light2:update(drawWorld)
-
-    cam:draw(function(l, t, w, h)
-        love.window.setTitle("FPS:" .. love.timer.getFPS())
-        light1:draw()
-        light2:draw()
-        drawWorld()
-    end)
+    world:update(love.timer.getDelta())
 end
