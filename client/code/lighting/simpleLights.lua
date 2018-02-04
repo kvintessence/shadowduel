@@ -78,6 +78,12 @@ function module.Light:getColor()
     return self.red, self.green, self.blue
 end
 
+--- PRIVATE HELPER METHODS STUFF ---
+
+local leftTopLightingBoxPosition = function(self)
+    return self.x - (self.radiance / 2), self.y - (self.radiance / 2)
+end
+
 --- DRAWING STUFF ---
 
 --- Shader for calculating the 1D shadow map.
@@ -88,25 +94,17 @@ local lightRenderShader = love.graphics.newShader("code/lighting/lightRenderShad
 
 --- Pass in a function that draws all shadow-casting objects to the screen.
 function module.Light:update(drawOccludersFn)
-    self.occludersCanvas:renderTo(function()
-        love.graphics.clear()
-    end)
-    self.shadowMapCanvas:renderTo(function()
-        love.graphics.clear()
-    end)
-    self.lightRenderCanvas:renderTo(function()
-        love.graphics.clear()
-    end)
+    self.occludersCanvas:renderTo(love.graphics.clear)
+    self.shadowMapCanvas:renderTo(love.graphics.clear)
+    self.lightRenderCanvas:renderTo(love.graphics.clear)
 
-    lightRenderShader:send("xresolution", self.radiance);
+    lightRenderShader:send("resolutionX", self.radiance);
     lightRenderShader:send("maxResolution", self.maxRadiance);
-    shadowMapShader:send("yresolution", self.radiance);
+    shadowMapShader:send("resolutionY", self.radiance);
     shadowMapShader:send("maxResolution", self.maxRadiance);
 
     -- Upper-left corner of light-casting box.
-    local x = self.x - (self.radiance / 2)
-    local y = self.y - (self.radiance / 2)
-
+    local left, top = leftTopLightingBoxPosition(self)
     local fullQuad = love.graphics.newQuad(0, 0, math.min(self.radiance + 20, self.maxRadiance), self.radiance, self.occludersCanvas:getDimensions())
     local shadowQuad = love.graphics.newQuad(0, 0, self.radiance, 1, self.shadowMapCanvas:getDimensions())
 
@@ -114,7 +112,7 @@ function module.Light:update(drawOccludersFn)
     -- box causes only occluders in the box to appear on the canvas.
     love.graphics.push()
     love.graphics.origin()
-    love.graphics.translate(-x, -y)
+    love.graphics.translate(-left, -top)
     self.occludersCanvas:renderTo(drawOccludersFn)
     love.graphics.pop()
 
@@ -141,15 +139,12 @@ function module.Light:update(drawOccludersFn)
 end
 
 function module.Light:draw()
-    -- Upper-left corner of light-casting box.
-    local x = self.x - (self.radiance / 2)
-    local y = self.y - (self.radiance / 2)
-
-    local fullQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.lightRenderCanvas:getDimensions())
+    local left, top = leftTopLightingBoxPosition(self)
+    local lightBoxQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.lightRenderCanvas:getDimensions())
 
     love.graphics.setBlendMode("add")
     love.graphics.setColor(self.red, self.green, self.blue, 255)
-    love.graphics.draw(self.lightRenderCanvas, fullQuad, x, y + self.radiance, 0, 1, -1)
+    love.graphics.draw(self.lightRenderCanvas, lightBoxQuad, left, top + self.radiance, 0, 1, -1)
     love.graphics.setBlendMode("alpha")
 end
 
