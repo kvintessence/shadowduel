@@ -99,9 +99,9 @@ function module.Light:update(drawOccludersFn)
     self.lightRenderCanvas:renderTo(love.graphics.clear)
 
     lightRenderShader:send("resolutionX", self.radiance);
-    lightRenderShader:send("maxResolution", self.maxRadiance);
+    lightRenderShader:send("canvasSize", self.maxRadiance);
     shadowMapShader:send("resolutionY", self.radiance);
-    shadowMapShader:send("maxResolution", self.maxRadiance);
+    shadowMapShader:send("canvasSize", self.maxRadiance);
 
     -- Upper-left corner of light-casting box.
     local left, top = leftTopLightingBoxPosition(self)

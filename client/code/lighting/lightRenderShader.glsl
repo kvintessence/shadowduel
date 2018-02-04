@@ -1,18 +1,18 @@
 #define PI 3.14
 
 extern number resolutionX;
-extern number maxResolution;
+extern number canvasSize;
 
 // sample from the 1D distance map
 number sample(vec2 coord, number r, Image u_texture)
 {
-    return step(r, Texel(u_texture, coord * (resolutionX / maxResolution)).r);
+    return step(r, Texel(u_texture, coord * (resolutionX / canvasSize)).r);
 }
 
 vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
 {
     // Transform rectangular to polar coordinates.
-    vec2 norm = texture_coords.st * (maxResolution / resolutionX) * 2.0 - 1.0;
+    vec2 norm = texture_coords.st * (canvasSize / resolutionX) * 2.0 - 1.0;
     number theta = atan(norm.y, norm.x);
     number r = length(norm);
     number coord = (theta + PI) / (2.0 * PI);
