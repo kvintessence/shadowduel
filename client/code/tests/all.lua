@@ -13,4 +13,3 @@ end
 
 runTest("utility", require("code/tests/utility"))
 runTest("eventBus", require("code/tests/eventbus"))
-runTest("ecs", require("code/tests/ecs"))

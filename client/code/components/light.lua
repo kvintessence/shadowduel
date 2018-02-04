@@ -80,10 +80,10 @@ end
 --- DRAWING STUFF ---
 
 --- Shader for calculating the 1D shadow map.
-local shadowMapShader = love.graphics.newShader("code/lighting/shaders/shadowMapShader.glsl")
+local shadowMapShader = love.graphics.newShader("code/components/shaders/shadowMapShader.glsl")
 
 --- Shader for rendering blurred lights and shadows.
-local lightRenderShader = love.graphics.newShader("code/lighting/shaders/lightRenderShader.glsl")
+local lightRenderShader = love.graphics.newShader("code/components/shaders/lightRenderShader.glsl")
 
 --- Pass in a function that draws all shadow-casting objects to the screen.
 function module.Light:update(x, y, drawOccludersFn)
