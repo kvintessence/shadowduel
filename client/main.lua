@@ -51,8 +51,19 @@ function love.load()
     })
 
     tinyECS.addEntity(world, {
+        [Position] = Position:new({ x = 300, y = 300 }),
+        [Rectangle] = Rectangle:new({ width = 75, height = 35 }),
+        [Occluder] = Occluder:new(),
+    })
+
+    tinyECS.addEntity(world, {
         [Light] = Light:new({ radiance = 500, maxRadiance = 950, red = 250, green = 100, blue = 50 }),
         [Position] = Position:new({ x = 250, y = 150 }),
+    })
+
+    tinyECS.addEntity(world, {
+        [Light] = Light:new({ radiance = 600, maxRadiance = 950, red = 50, green = 255, blue = 150 }),
+        [Position] = Position:new({ x = 450, y = 350 }),
     })
 
     light2 = tinyECS.addEntity(world, {
