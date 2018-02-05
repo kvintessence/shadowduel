@@ -134,7 +134,7 @@ function module.Light:draw(x, y)
     local left, top = leftTopLightingBoxPosition(self, x, y)
     local lightBoxQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.lightRenderCanvas:getDimensions())
 
-    love.graphics.setBlendMode("add")
+    love.graphics.setBlendMode("screen")
     love.graphics.setColor(self.red, self.green, self.blue, 255)
     love.graphics.draw(self.lightRenderCanvas, lightBoxQuad, left, top + self.radiance, 0, 1, -1)
     love.graphics.setBlendMode("alpha")

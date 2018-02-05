@@ -62,6 +62,15 @@ function love.load()
         [Position] = Position:new({ x = 450, y = 350 }),
     })
 
+    local floorImage = love.graphics.newImage("assets/floor.png")
+    local floorImageQuad = love.graphics.newQuad(0, 0, 800, 600, floorImage:getDimensions())
+    floorImage:setWrap("repeat", "repeat")
+
+    tinyECS.addEntity(world, {
+        [Position] = Position:new({ x = 400, y = 300 }),
+        [Image] = Image:new({ image = floorImage, quad = floorImageQuad }),
+    })
+
     light2 = tinyECS.addEntity(world, {
         [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
         [Position] = Position:new({ x = 450, y = 250 }),
