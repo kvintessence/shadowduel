@@ -21,14 +21,10 @@ function love.keypressed(key, scancode, isrepeat)
     if key == "a" then
         cam:setScale((8.0 / 9.0) * cam:getScale())
     end
+end
 
-    if key == "w" then
-        light2[Light]:setRadiance(light2[Light]:getRadiance() + 25)
-    end
-
-    if key == "s" then
-        light2[Light]:setRadiance(light2[Light]:getRadiance() - 25)
-    end
+function love.wheelmoved(x, y)
+    light2[Light]:setRadiance(light2[Light]:getRadiance() + 10 * y)
 end
 
 function love.load()
