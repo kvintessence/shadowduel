@@ -1,6 +1,7 @@
 local class = require("lib/middleclass")
-local gamera = require("lib/gamera")
 local tinyECS = require("lib/tiny-ecs")
+
+local globals = require("code/globals")
 
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
@@ -12,14 +13,7 @@ local module = {}
 
 module.DrawWorldSystem = tinyECS.processingSystem(class('systems/drawWorld'))
 
-function module.DrawWorldSystem:initialize(parameters)
-    local left = parameters.left or 0
-    local top = parameters.top or 0
-    local width = parameters.width or love.graphics.getWidth()
-    local height = parameters.height or love.graphics.getHeight()
-
-    self.camera = gamera.new(left, top, width, height)
-
+function module.DrawWorldSystem:initialize()
     self.canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
     self.applyLightShader = love.graphics.newShader("code/components/shaders/applyLight.glsl")
 end
@@ -39,7 +33,7 @@ function module.DrawWorldSystem:preProcess()
     end
 
     self.lightsToDraw = {}
-    self.camera:setWindow(0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+    globals.camera:setWindow(0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 end
 
 function module.DrawWorldSystem:process(entity)
@@ -47,7 +41,7 @@ function module.DrawWorldSystem:process(entity)
         table.insert(self.lightsToDraw, entity)
     end
 
-    self.camera:draw(function(l, t, w, h)
+    globals.camera:draw(function(l, t, w, h)
         if entity[Image] then
             local image = entity[Image]
             local imageQuad = entity[Image].quad
@@ -78,9 +72,9 @@ function module.DrawWorldSystem:postProcess()
     local previousShader = love.graphics.getShader()
 
     love.graphics.setCanvas(self.canvas)
-    love.graphics.clear(0, 0, 0, 0)  -- ????????
+    love.graphics.clear(0, 0, 0, 0)
 
-    self.camera:draw(function(l, t, w, h)
+    globals.camera:draw(function(l, t, w, h)
         for _, entity in ipairs(self.lightsToDraw) do
             local position = entity[Position]
             entity[Light]:draw(position.x, position.y)
