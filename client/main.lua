@@ -6,6 +6,7 @@ local globals = require("code/globals")
 local DrawWorldSystem = require("code/systems/drawWorld").DrawWorldSystem
 local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSystem
 local OccludersSystem = require("code/systems/occluders").OccludersSystem
+local PhysicsSystem = require("code/systems/physics").PhysicsSystem
 
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
@@ -13,6 +14,7 @@ local Position = require("code/components/position").Position
 local Occluder = require("code/components/occluder").Occluder
 local Light = require("code/components/light").Light
 local Image = require("code/components/image").Image
+local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 
 -------------------
 
@@ -34,6 +36,8 @@ function love.load()
     globals.world = tinyECS.world()
     globals.camera = gamera.new(0, 0, 1600, 1200)
 
+    tinyECS.addSystem(globals.world, PhysicsSystem:new())
+
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))
     tinyECS.addSystem(globals.world, DrawWorldSystem:new({ left = 0, top = 0, width = 2000, height = 2000 }))
@@ -42,6 +46,7 @@ function love.load()
         [Position] = Position:new({ x = 300, y = 100 }),
         [Circle] = Circle:new({ radius = 25 }),
         [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
     })
 
     tinyECS.addEntity(globals.world, {
