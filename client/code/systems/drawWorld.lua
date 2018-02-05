@@ -53,9 +53,8 @@ function module.DrawWorldSystem:process(entity)
             local imageQuad = entity[Image].quad
             local position = entity[Position]
 
-            -- TODO: FIX QUAD POSITION!
-            local x = position.x - 0.5 * image.image:getWidth() * image.scale
-            local y = position.y - 0.5 * image.image:getHeight() * image.scale
+            local x = position.x - 0.5 * image:getWidth() * image.scale
+            local y = position.y - 0.5 * image:getHeight() * image.scale
 
             if imageQuad then
                 love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scale)

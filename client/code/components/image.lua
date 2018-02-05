@@ -10,4 +10,31 @@ function module.Image:initialize(parameters)
     self.scale = parameters.scale or 1
 end
 
+function module.Image:getWidth()
+    if self.quad then
+        local x, y, w, h = self.quad:getViewport()
+        return w
+    end
+
+    return self.image:getWidth()
+end
+
+function module.Image:getHeight()
+    if self.quad then
+        local x, y, w, h = self.quad:getViewport()
+        return h
+    end
+
+    return self.image:getHeight()
+end
+
+function module.Image:getDimensions()
+    if self.quad then
+        local x, y, w, h = self.quad:getViewport()
+        return w, h
+    end
+
+    return self.image:getDimensions()
+end
+
 return module
