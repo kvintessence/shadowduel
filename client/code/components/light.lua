@@ -30,7 +30,7 @@ end
 --- SETTERS / GETTERS ---
 
 function module.Light:setRadiance(radiance)
-    self.radiance = math.min(radiance, self.maxRadiance)
+    self.radiance = math.max(0, math.min(radiance, self.maxRadiance))
 end
 
 function module.Light:getRadiance()
