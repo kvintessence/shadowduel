@@ -7,6 +7,7 @@ local DrawWorldSystem = require("code/systems/drawWorld").DrawWorldSystem
 local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSystem
 local OccludersSystem = require("code/systems/occluders").OccludersSystem
 local PhysicsSystem = require("code/systems/physics").PhysicsSystem
+local SecondPlayerFinderSystem = require("code/systems/secondPlayerFinder").SecondPlayerFinderSystem
 
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
@@ -41,6 +42,8 @@ function love.load()
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))
     tinyECS.addSystem(globals.world, DrawWorldSystem:new({ left = 0, top = 0, width = 2000, height = 2000 }))
+
+    tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
 
     tinyECS.addEntity(globals.world, {
         [Position] = Position:new({ x = 300, y = 100 }),
