@@ -12,6 +12,8 @@ local PhysicsSystem = require("code/systems/physics").PhysicsSystem
 local SecondPlayerFinderSystem = require("code/systems/secondPlayerFinder").SecondPlayerFinderSystem
 local BodyControllerSystem = require("code/systems/bodyController").BodyControllerSystem
 local PointCameraAtPlayerSystem = require("code/systems/pointCameraAtPlayer").PointCameraAtPlayerSystem
+local FootprintHandler = require("code/systems/footprintHandler").FootprintHandler
+local DecayingObjectHandlerSystem = require("code/systems/decayingObjectHandler").DecayingObjectHandlerSystem
 
 local Line = require("code/components/line").Line
 local Circle = require("code/components/circle").Circle
@@ -25,6 +27,7 @@ local Image = require("code/components/image").Image
 local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local ControlledBody = require("code/components/controlledBody").ControlledBody
 local Player = require("code/components/player").Player
+local FootprintSource = require("code/components/footprintSource").FootprintSource
 
 -------------------
 
@@ -89,7 +92,8 @@ local spawnWorldObstacles = function()
 end
 
 local spawnWorldVisuals = function()
-    local floorImage = love.graphics.newImage("assets/floor.png")
+    --local floorImage = love.graphics.newImage("assets/floor.png")
+    local floorImage = love.graphics.newImage("assets/sand.jpg")
     local floorImageQuad = love.graphics.newQuad(0, 0, worldWidth, worldHeight, floorImage:getDimensions())
     floorImage:setWrap("repeat", "repeat")
 
@@ -124,6 +128,8 @@ local spawnPlayers = function()
         [PhysicalBody] = PhysicalBody:new({ type = "dynamic" }),
         [ControlledBody] = ControlledBody:new(),
         [Player] = Player:new({ localPlayer = true }),
+
+        [FootprintSource] = FootprintSource:new({ requiredDistance = 80 }),
     })
 end
 
@@ -133,6 +139,9 @@ local createWorld = function()
     tinyECS.addSystem(globals.world, BodyControllerSystem:new())
     tinyECS.addSystem(globals.world, PhysicsSystem:new())
     tinyECS.addSystem(globals.world, PointCameraAtPlayerSystem:new())
+
+    tinyECS.addSystem(globals.world, DecayingObjectHandlerSystem:new())
+    tinyECS.addSystem(globals.world, FootprintHandler:new())
 
     tinyECS.addSystem(globals.world, LightSwitcherSystem:new())
     tinyECS.addSystem(globals.world, LightFaderSystem:new())
