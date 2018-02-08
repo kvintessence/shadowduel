@@ -5,6 +5,7 @@ local globals = require("code/globals")
 
 local DrawWorldSystem = require("code/systems/drawWorld").DrawWorldSystem
 local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSystem
+local LightSwitcherSystem = require("code/systems/lightSwitcher").LightSwitcherSystem
 local OccludersSystem = require("code/systems/occluders").OccludersSystem
 local PhysicsSystem = require("code/systems/physics").PhysicsSystem
 local SecondPlayerFinderSystem = require("code/systems/secondPlayerFinder").SecondPlayerFinderSystem
@@ -17,6 +18,7 @@ local Rectangle = require("code/components/rectangle").Rectangle
 local Position = require("code/components/position").Position
 local Occluder = require("code/components/occluder").Occluder
 local Light = require("code/components/light").Light
+local LightSwitch = require("code/components/lightSwitch").LightSwitch
 local Image = require("code/components/image").Image
 local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local ControlledBody = require("code/components/controlledBody").ControlledBody
@@ -109,6 +111,8 @@ end
 local spawnPlayers = function()
     tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
+        [LightSwitch] = LightSwitch:new({ darkness = 0, brightness = 850 }),
+
         [Position] = Position:new({ x = 450, y = 250 }),
         [Image] = Image:new({ filename = "assets/highwayman.png", scale = 0.2 }),
 
@@ -124,6 +128,8 @@ local createWorld = function()
     tinyECS.addSystem(globals.world, BodyControllerSystem:new())
     tinyECS.addSystem(globals.world, PhysicsSystem:new())
     tinyECS.addSystem(globals.world, PointCameraAtPlayerSystem:new())
+
+    tinyECS.addSystem(globals.world, LightSwitcherSystem:new())
 
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))
