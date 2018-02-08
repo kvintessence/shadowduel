@@ -47,13 +47,16 @@ function module.DrawWorldSystem:process(entity)
             local imageQuad = entity[Image].quad
             local position = entity[Position]
 
-            local x = position.x - 0.5 * image:getWidth() * image.scale
-            local y = position.y - 0.5 * image:getHeight() * image.scale
+            local halfWidth = 0.5 * image:getWidth()
+            local halfHeight = 0.5 * image:getHeight()
+
+            local x = position.x
+            local y = position.y
 
             if imageQuad then
-                love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scale)
+                love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
             else
-                love.graphics.draw(image.image, x, y, position.rotation, image.scale)
+                love.graphics.draw(image.image, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
             end
         elseif entity[Circle] then
             local circle = entity[Circle]

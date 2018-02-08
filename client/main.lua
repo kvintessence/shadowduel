@@ -8,6 +8,7 @@ local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSyst
 local OccludersSystem = require("code/systems/occluders").OccludersSystem
 local PhysicsSystem = require("code/systems/physics").PhysicsSystem
 local SecondPlayerFinderSystem = require("code/systems/secondPlayerFinder").SecondPlayerFinderSystem
+local BodyControllerSystem = require("code/systems/bodyController").BodyControllerSystem
 
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
@@ -16,34 +17,24 @@ local Occluder = require("code/components/occluder").Occluder
 local Light = require("code/components/light").Light
 local Image = require("code/components/image").Image
 local PhysicalBody = require("code/components/physicalBody").PhysicalBody
+local ControlledBody = require("code/components/controlledBody").ControlledBody
 
 -------------------
 
-function love.keypressed(key, scancode, isrepeat)
-    if key == "q" then
-        cam:setScale((9.0 / 8.0) * cam:getScale())
-    end
-
-    if key == "a" then
-        cam:setScale((8.0 / 9.0) * cam:getScale())
-    end
-end
-
-function love.wheelmoved(x, y)
-    light2[Light]:setRadiance(light2[Light]:getRadiance() + 10 * y)
-end
+io.stdout:setvbuf('no')
 
 function love.load()
     globals.world = tinyECS.world()
     globals.camera = gamera.new(0, 0, 1600, 1200)
 
+    tinyECS.addSystem(globals.world, BodyControllerSystem:new())
     tinyECS.addSystem(globals.world, PhysicsSystem:new())
 
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))
     tinyECS.addSystem(globals.world, DrawWorldSystem:new({ left = 0, top = 0, width = 2000, height = 2000 }))
 
-    tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
+    --tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
 
     tinyECS.addEntity(globals.world, {
         [Position] = Position:new({ x = 300, y = 100 }),
@@ -83,16 +74,18 @@ function love.load()
         [Image] = Image:new({ image = floorImage, quad = floorImageQuad }),
     })
 
-    light2 = tinyECS.addEntity(globals.world, {
+    tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
         [Position] = Position:new({ x = 450, y = 250 }),
         [Image] = Image:new({ filename = "assets/highwayman.png", scale = 0.2 }),
+
+        [Circle] = Circle:new({ radius = 25 }),
+        [PhysicalBody] = PhysicalBody:new({ type = "dynamic" }),
+        [ControlledBody] = ControlledBody:new(),
     })
 end
 
 function love.update(dt)
-    light2[Position]:set(love.mouse.getX(), love.mouse.getY())
-
     local fps = "FPS:" .. love.timer.getFPS()
     local systemCount = ", systems: " .. tinyECS.getSystemCount(globals.world)
     local entityCount = ", entities: " .. tinyECS.getEntityCount(globals.world)
