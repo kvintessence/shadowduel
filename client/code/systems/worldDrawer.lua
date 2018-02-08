@@ -9,8 +9,52 @@ local Position = require("code/components/position").Position
 local Image = require("code/components/image").Image
 local Light = require("code/components/light").Light
 local ZOrder = require("code/components/zOrder").ZOrder
+local Line = require("code/components/line").Line
 
 local module = {}
+
+--- shared functions ---
+
+function module.drawEntity(entity)
+    if entity[Image] then
+        local image = entity[Image]
+        local imageQuad = entity[Image].quad
+        local position = entity[Position]
+
+        local halfWidth = 0.5 * image:getWidth()
+        local halfHeight = 0.5 * image:getHeight()
+
+        local x = position.x
+        local y = position.y
+
+        if image.opacity then
+            love.graphics.setColor(255, 255, 255, image.opacity)
+        end
+
+        if imageQuad then
+            love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
+        else
+            love.graphics.draw(image.image, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
+        end
+
+        if image.opacity then
+            love.graphics.setColor(255, 255, 255)
+        end
+    elseif entity[Circle] then
+        local circle = entity[Circle]
+        local position = entity[Position]
+        love.graphics.circle("fill", position.x, position.y, circle.radius)
+    elseif entity[Rectangle] then
+        local rectangle = entity[Rectangle]
+        local position = entity[Position]
+        love.graphics.rectangle("fill", position.x - rectangle.width / 2, position.y - rectangle.height / 2, rectangle.width, rectangle.height)
+    elseif entity[Line] then
+        local line = entity[Line]
+        love.graphics.line(line.x1, line.y1, line.x2, line.y2)
+    end
+end
+
+--- --- --- --- --- ---
 
 module.WorldDrawerSystem = tinyECS.sortedProcessingSystem(class('systems/worldDrawerSystem'))
 
@@ -47,40 +91,8 @@ function module.WorldDrawerSystem:process(entity)
         table.insert(self.lightsToDraw, entity)
     end
 
-    globals.camera:draw(function(l, t, w, h)
-        if entity[Image] then
-            local image = entity[Image]
-            local imageQuad = entity[Image].quad
-            local position = entity[Position]
-
-            local halfWidth = 0.5 * image:getWidth()
-            local halfHeight = 0.5 * image:getHeight()
-
-            local x = position.x
-            local y = position.y
-
-            if image.opacity then
-                love.graphics.setColor(255, 255, 255, image.opacity)
-            end
-
-            if imageQuad then
-                love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
-            else
-                love.graphics.draw(image.image, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
-            end
-
-            if image.opacity then
-                love.graphics.setColor(255, 255, 255)
-            end
-        elseif entity[Circle] then
-            local circle = entity[Circle]
-            local position = entity[Position]
-            love.graphics.circle("fill", position.x, position.y, circle.radius)
-        elseif entity[Rectangle] then
-            local rectangle = entity[Rectangle]
-            local position = entity[Position]
-            love.graphics.rectangle("fill", position.x - rectangle.width / 2, position.y - rectangle.height / 2, rectangle.width, rectangle.height)
-        end
+    globals.camera:draw(function()
+        module.drawEntity(entity)
     end)
 end
 
