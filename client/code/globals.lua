@@ -1,7 +1,7 @@
 return {
     camera = nil,
     world = nil,
-    drawPhysics = true,
+    drawPhysics = false,
 
     layers = {
         player = 2,

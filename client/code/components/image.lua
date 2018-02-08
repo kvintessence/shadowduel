@@ -7,7 +7,8 @@ module.Image = class('components/image')
 function module.Image:initialize(parameters)
     self.image = parameters.image or love.graphics.newImage(parameters.filename)
     self.quad = parameters.quad or nil
-    self.scale = parameters.scale or 1
+    self.scaleX = parameters.scaleX or parameters.scale or 1
+    self.scaleY = parameters.scaleY or parameters.scale or 1
     self.opacity = parameters.opacity or nil
 end
 

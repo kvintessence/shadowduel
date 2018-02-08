@@ -39,14 +39,22 @@ function module.FootprintHandler:process(entity, delta)
     if footprint.currentDistance >= footprint.requiredDistance then
         local angle = math.atan2((y - lastY), (x - lastX))
 
+        local reverse
+        if footprint.reverse then
+            reverse = -1
+        else
+            reverse = 1
+        end
+
         footprint.currentDistance = 0
 
         tinyECS.addEntity(self.world, {
             [Position] = Position:new({ x = x, y = y, rotation = angle }),
-            [Image] = Image:new({ image = self.footprintImage, scale = 0.2 }),
+            [Image] = Image:new({ image = self.footprintImage, scaleX = 0.2, scaleY = 0.2 * reverse }),
             [DecayingObject] = DecayingObject:new({ lifetime = 15 }),
             [ZOrder] = ZOrder:new({ layer = globals.layers.footprints }),
         })
+        footprint.reverse = not footprint.reverse
     end
 
     footprint.lastX, footprint.lastY = x, y

@@ -10,6 +10,7 @@ function module.FootprintSource:initialize(parameters)
     self.currentDistance = 0
     self.lastX = nil
     self.lastY = nil
+    self.reverse = false
 end
 
 return module

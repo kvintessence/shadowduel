@@ -92,6 +92,9 @@ function module.Light:update(x, y, drawOccludersFn)
     shadowMapShader:send("resolutionY", self.radiance);
     shadowMapShader:send("canvasSize", self.maxRadiance);
 
+    local previousCanvas = love.graphics.getCanvas()
+    local previousShader = love.graphics.getShader()
+
     -- Upper-left corner of light-casting box.
     local left, top = leftTopLightingBoxPosition(self, x, y)
     local fullQuad = love.graphics.newQuad(0, 0, math.min(self.radiance + 20, self.maxRadiance), self.radiance, self.occludersCanvas:getDimensions())
@@ -128,6 +131,9 @@ function module.Light:update(x, y, drawOccludersFn)
     love.graphics.setShader()
 
     love.graphics.pop()
+
+    love.graphics.setCanvas(previousCanvas)
+    love.graphics.setShader(previousShader)
 end
 
 function module.Light:draw(x, y)

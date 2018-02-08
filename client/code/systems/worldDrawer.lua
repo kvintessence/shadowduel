@@ -32,9 +32,9 @@ function module.drawEntity(entity)
         end
 
         if imageQuad then
-            love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
+            love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scaleX, image.scaleY, halfWidth, halfHeight)
         else
-            love.graphics.draw(image.image, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
+            love.graphics.draw(image.image, x, y, position.rotation, image.scaleX, image.scaleY, halfWidth, halfHeight)
         end
 
         if image.opacity then
@@ -116,7 +116,7 @@ function module.WorldDrawerSystem:postProcess()
     love.graphics.push()
     love.graphics.origin()
 
-    love.graphics.setColor(0, 0, 0)
+    love.graphics.setColor(12, 0, 40)
     love.graphics.draw(self.canvas, 0, 0)
     love.graphics.setBlendMode("alpha")
 

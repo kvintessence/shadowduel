@@ -4,6 +4,7 @@ local gamera = require("lib/gamera")
 local globals = require("code/globals")
 
 local WorldDrawerSystem = require("code/systems/worldDrawer").WorldDrawerSystem
+local FOVDrawerSystem = require("code/systems/fovDrawer").FOVDrawerSystem
 local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSystem
 local LightSwitcherSystem = require("code/systems/lightSwitcher").LightSwitcherSystem
 local LightFaderSystem = require("code/systems/lightFader").LightFaderSystem
@@ -93,8 +94,7 @@ local spawnWorldObstacles = function()
 end
 
 local spawnWorldVisuals = function()
-    --local floorImage = love.graphics.newImage("assets/floor.png")
-    local floorImage = love.graphics.newImage("assets/sand.jpg")
+    local floorImage = love.graphics.newImage("assets/texture_sea.png")
     local floorImageQuad = love.graphics.newQuad(0, 0, worldWidth, worldHeight, floorImage:getDimensions())
     floorImage:setWrap("repeat", "repeat")
 
@@ -119,7 +119,7 @@ end
 local spawnPlayers = function()
     tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 1200, maxRadiance = 1200, red = 50, green = 100, blue = 250 }),
-        [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 850 }),
+        [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 1200 }),
         [LightSwitch] = LightSwitch:new({ darkness = 160, brightness = 1200 }),
 
         [Position] = Position:new({ x = 450, y = 250 }),
@@ -150,7 +150,8 @@ local createWorld = function()
 
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))
-    tinyECS.addSystem(globals.world, WorldDrawerSystem:new({ left = 0, top = 0, width = 2000, height = 2000 }))
+    tinyECS.addSystem(globals.world, WorldDrawerSystem:new())
+    --tinyECS.addSystem(globals.world, FOVDrawerSystem:new(occluders))
 
     --tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
 
