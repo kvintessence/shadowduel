@@ -3,7 +3,7 @@ local gamera = require("lib/gamera")
 
 local globals = require("code/globals")
 
-local DrawWorldSystem = require("code/systems/drawWorld").DrawWorldSystem
+local WorldDrawerSystem = require("code/systems/worldDrawer").WorldDrawerSystem
 local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSystem
 local LightSwitcherSystem = require("code/systems/lightSwitcher").LightSwitcherSystem
 local LightFaderSystem = require("code/systems/lightFader").LightFaderSystem
@@ -150,7 +150,7 @@ local createWorld = function()
 
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))
-    tinyECS.addSystem(globals.world, DrawWorldSystem:new({ left = 0, top = 0, width = 2000, height = 2000 }))
+    tinyECS.addSystem(globals.world, WorldDrawerSystem:new({ left = 0, top = 0, width = 2000, height = 2000 }))
 
     --tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
 

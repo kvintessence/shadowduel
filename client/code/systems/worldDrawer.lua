@@ -12,24 +12,24 @@ local ZOrder = require("code/components/zOrder").ZOrder
 
 local module = {}
 
-module.DrawWorldSystem = tinyECS.sortedProcessingSystem(class('systems/drawWorld'))
+module.WorldDrawerSystem = tinyECS.sortedProcessingSystem(class('systems/worldDrawerSystem'))
 
-function module.DrawWorldSystem:initialize()
+function module.WorldDrawerSystem:initialize()
     self.canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
     self.applyLightShader = love.graphics.newShader("code/components/shaders/applyLight.glsl")
 end
 
-function module.DrawWorldSystem:filter(entity)
+function module.WorldDrawerSystem:filter(entity)
     return entity[Position] and (entity[Circle] or entity[Rectangle] or entity[Light] or entity[Image])
 end
 
-function module.DrawWorldSystem:compare(entity1, entity2)
+function module.WorldDrawerSystem:compare(entity1, entity2)
     local order1, order2 = entity1[ZOrder], entity2[ZOrder]
     return (not order1 and order2) or (order1 and order2 and order1.layer < order2.layer)
 end
 
-function module.DrawWorldSystem:preProcess()
-    love.graphics.setColor(255, 255, 255, 255)
+function module.WorldDrawerSystem:preProcess()
+    love.graphics.setColor(255, 255, 255)
 
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local canvasWidth, canvasHeight = self.canvas:getDimensions()
@@ -42,12 +42,10 @@ function module.DrawWorldSystem:preProcess()
     globals.camera:setWindow(0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 end
 
-function module.DrawWorldSystem:process(entity)
+function module.WorldDrawerSystem:process(entity)
     if entity[Light] then
         table.insert(self.lightsToDraw, entity)
     end
-
-    love.graphics.setColor(255, 255, 255)
 
     globals.camera:draw(function(l, t, w, h)
         if entity[Image] then
@@ -86,7 +84,7 @@ function module.DrawWorldSystem:process(entity)
     end)
 end
 
-function module.DrawWorldSystem:postProcess()
+function module.WorldDrawerSystem:postProcess()
     local previousCanvas = love.graphics.getCanvas()
     local previousShader = love.graphics.getShader()
 
