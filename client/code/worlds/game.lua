@@ -118,7 +118,7 @@ local spawnPlayers = function()
         [LightSwitch] = LightSwitch:new({ darkness = 0, brightness = 850 }),
 
         [Position] = Position:new({ x = 450, y = 250 }),
-        [Image] = Image:new({ filename = "assets/highwayman.png", scale = 0.2 }),
+        [Image] = Image:new({ filename = "assets/player.png", scale = 0.3 }),
 
         [Circle] = Circle:new({ radius = 25 }),
         [PhysicalBody] = PhysicalBody:new({ type = "dynamic" }),
