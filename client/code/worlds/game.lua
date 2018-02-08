@@ -6,6 +6,7 @@ local globals = require("code/globals")
 local DrawWorldSystem = require("code/systems/drawWorld").DrawWorldSystem
 local LightUpdaterSystem = require("code/systems/lightUpdater").LightUpdaterSystem
 local LightSwitcherSystem = require("code/systems/lightSwitcher").LightSwitcherSystem
+local LightFaderSystem = require("code/systems/lightFader").LightFaderSystem
 local OccludersSystem = require("code/systems/occluders").OccludersSystem
 local PhysicsSystem = require("code/systems/physics").PhysicsSystem
 local SecondPlayerFinderSystem = require("code/systems/secondPlayerFinder").SecondPlayerFinderSystem
@@ -19,6 +20,7 @@ local Position = require("code/components/position").Position
 local Occluder = require("code/components/occluder").Occluder
 local Light = require("code/components/light").Light
 local LightSwitch = require("code/components/lightSwitch").LightSwitch
+local LightFade = require("code/components/lightFade").LightFade
 local Image = require("code/components/image").Image
 local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local ControlledBody = require("code/components/controlledBody").ControlledBody
@@ -111,6 +113,7 @@ end
 local spawnPlayers = function()
     tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
+        [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 850 }),
         [LightSwitch] = LightSwitch:new({ darkness = 0, brightness = 850 }),
 
         [Position] = Position:new({ x = 450, y = 250 }),
@@ -130,6 +133,7 @@ local createWorld = function()
     tinyECS.addSystem(globals.world, PointCameraAtPlayerSystem:new())
 
     tinyECS.addSystem(globals.world, LightSwitcherSystem:new())
+    tinyECS.addSystem(globals.world, LightFaderSystem:new())
 
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))

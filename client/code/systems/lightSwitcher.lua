@@ -3,6 +3,7 @@ local tinyECS = require("lib/tiny-ecs")
 
 local Light = require("code/components/light").Light
 local LightSwitch = require("code/components/lightSwitch").LightSwitch
+local LightFade = require("code/components/lightFade").LightFade
 
 local module = {}
 
@@ -21,14 +22,22 @@ function module.LightSwitcherSystem:process(entity)
     local shouldSwitch = (keyPressed and not self.switchKeyPressed)
 
     if shouldSwitch then
+        local newRadiance
+
         if entity[LightSwitch].on then
             -- turn off
             entity[LightSwitch].on = false
-            entity[Light].radiance = entity[LightSwitch].darkness
+            newRadiance = entity[LightSwitch].darkness
         else
             -- turn on
             entity[LightSwitch].on = true
-            entity[Light].radiance = entity[LightSwitch].brightness
+            newRadiance = entity[LightSwitch].brightness
+        end
+
+        if entity[LightFade] then
+            entity[LightFade].targetRadiance = newRadiance
+        else
+            entity[Light].radiance = newRadiance
         end
     end
 
