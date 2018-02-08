@@ -20,7 +20,7 @@ function module.BodyControllerSystem:filter(entity)
 end
 
 function module.BodyControllerSystem:process(entity, delta)
-    local force = 1600
+    local force = 3600
 
     local vectorX, vectorY = 0, 0
 

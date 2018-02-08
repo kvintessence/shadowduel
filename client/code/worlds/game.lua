@@ -118,14 +118,14 @@ end
 
 local spawnPlayers = function()
     tinyECS.addEntity(globals.world, {
-        [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
+        [Light] = Light:new({ radiance = 1200, maxRadiance = 1200, red = 50, green = 100, blue = 250 }),
         [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 850 }),
-        [LightSwitch] = LightSwitch:new({ darkness = 120, brightness = 850 }),
+        [LightSwitch] = LightSwitch:new({ darkness = 160, brightness = 1200 }),
 
         [Position] = Position:new({ x = 450, y = 250 }),
-        [Image] = Image:new({ filename = "assets/char_fish.png", scale = 0.4 }),
+        [Image] = Image:new({ filename = "assets/char_fish.png", scale = 0.5 }),
 
-        [Circle] = Circle:new({ radius = 25 }),
+        [Circle] = Circle:new({ radius = 35 }),
         [PhysicalBody] = PhysicalBody:new({ type = "dynamic" }),
         [ControlledBody] = ControlledBody:new(),
         [Player] = Player:new({ localPlayer = true }),
