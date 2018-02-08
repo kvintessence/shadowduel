@@ -123,7 +123,7 @@ local spawnPlayers = function()
         [LightSwitch] = LightSwitch:new({ darkness = 120, brightness = 850 }),
 
         [Position] = Position:new({ x = 450, y = 250 }),
-        [Image] = Image:new({ filename = "assets/player.png", scale = 0.3 }),
+        [Image] = Image:new({ filename = "assets/char_fish.png", scale = 0.4 }),
 
         [Circle] = Circle:new({ radius = 25 }),
         [PhysicalBody] = PhysicalBody:new({ type = "dynamic" }),
