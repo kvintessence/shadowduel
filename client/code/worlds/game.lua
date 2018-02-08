@@ -115,7 +115,7 @@ local spawnPlayers = function()
     tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 850, maxRadiance = 950, red = 50, green = 100, blue = 250 }),
         [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 850 }),
-        [LightSwitch] = LightSwitch:new({ darkness = 0, brightness = 850 }),
+        [LightSwitch] = LightSwitch:new({ darkness = 120, brightness = 850 }),
 
         [Position] = Position:new({ x = 450, y = 250 }),
         [Image] = Image:new({ filename = "assets/player.png", scale = 0.3 }),

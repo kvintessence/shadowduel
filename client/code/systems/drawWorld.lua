@@ -41,6 +41,8 @@ function module.DrawWorldSystem:process(entity)
         table.insert(self.lightsToDraw, entity)
     end
 
+    love.graphics.setColor(255, 255, 255)
+
     globals.camera:draw(function(l, t, w, h)
         if entity[Image] then
             local image = entity[Image]
@@ -53,10 +55,18 @@ function module.DrawWorldSystem:process(entity)
             local x = position.x
             local y = position.y
 
+            if image.opacity then
+                love.graphics.setColor(255, 255, 255, image.opacity)
+            end
+
             if imageQuad then
                 love.graphics.draw(image.image, imageQuad, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
             else
                 love.graphics.draw(image.image, x, y, position.rotation, image.scale, image.scale, halfWidth, halfHeight)
+            end
+
+            if image.opacity then
+                love.graphics.setColor(255, 255, 255)
             end
         elseif entity[Circle] then
             local circle = entity[Circle]

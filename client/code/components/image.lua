@@ -8,6 +8,7 @@ function module.Image:initialize(parameters)
     self.image = parameters.image or love.graphics.newImage(parameters.filename)
     self.quad = parameters.quad or nil
     self.scale = parameters.scale or 1
+    self.opacity = parameters.opacity or nil
 end
 
 function module.Image:getWidth()
