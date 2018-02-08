@@ -9,6 +9,7 @@ local OccludersSystem = require("code/systems/occluders").OccludersSystem
 local PhysicsSystem = require("code/systems/physics").PhysicsSystem
 local SecondPlayerFinderSystem = require("code/systems/secondPlayerFinder").SecondPlayerFinderSystem
 local BodyControllerSystem = require("code/systems/bodyController").BodyControllerSystem
+local PointCameraAtPlayerSystem = require("code/systems/pointCameraAtPlayer").PointCameraAtPlayerSystem
 
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
@@ -23,12 +24,16 @@ local ControlledBody = require("code/components/controlledBody").ControlledBody
 
 io.stdout:setvbuf('no')
 
+local worldWidth, worldHeight = 800, 600
+local worldGap = 250
+
 function love.load()
     globals.world = tinyECS.world()
-    globals.camera = gamera.new(0, 0, 1600, 1200)
+    globals.camera = gamera.new(-worldGap, -worldGap, worldWidth + 2 * worldGap, worldHeight + 2 * worldGap)
 
     tinyECS.addSystem(globals.world, BodyControllerSystem:new())
     tinyECS.addSystem(globals.world, PhysicsSystem:new())
+    tinyECS.addSystem(globals.world, PointCameraAtPlayerSystem:new())
 
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))

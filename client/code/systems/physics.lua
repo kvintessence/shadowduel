@@ -57,7 +57,7 @@ end
 
 function module.PhysicsSystem:postWrap()
     if globals.drawPhysics then
-        self.physicsWorld:draw()
+        globals.camera:draw(function() self.physicsWorld:draw() end)
     end
 end
 
