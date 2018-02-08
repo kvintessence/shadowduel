@@ -90,7 +90,6 @@ function module.DrawWorldSystem:postProcess()
     love.graphics.push()
     love.graphics.origin()
 
-    --love.graphics.setBlendMode("screen")
     love.graphics.setColor(0, 0, 0)
     love.graphics.draw(self.canvas, 0, 0)
     love.graphics.setBlendMode("alpha")
