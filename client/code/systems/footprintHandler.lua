@@ -44,7 +44,7 @@ function module.FootprintHandler:process(entity, delta)
         tinyECS.addEntity(self.world, {
             [Position] = Position:new({ x = x, y = y, rotation = angle }),
             [Image] = Image:new({ image = self.footprintImage, scale = 0.2 }),
-            [DecayingObject] = DecayingObject:new({ lifetime = 5 }),
+            [DecayingObject] = DecayingObject:new({ lifetime = 15 }),
             [ZOrder] = ZOrder:new({ layer = globals.layers.footprints }),
         })
     end
