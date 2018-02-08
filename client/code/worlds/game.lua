@@ -28,6 +28,7 @@ local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local ControlledBody = require("code/components/controlledBody").ControlledBody
 local Player = require("code/components/player").Player
 local FootprintSource = require("code/components/footprintSource").FootprintSource
+local ZOrder = require("code/components/zOrder").ZOrder
 
 -------------------
 
@@ -130,6 +131,7 @@ local spawnPlayers = function()
         [Player] = Player:new({ localPlayer = true }),
 
         [FootprintSource] = FootprintSource:new({ requiredDistance = 80 }),
+        [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
     })
 end
 

@@ -8,10 +8,11 @@ local Rectangle = require("code/components/rectangle").Rectangle
 local Position = require("code/components/position").Position
 local Image = require("code/components/image").Image
 local Light = require("code/components/light").Light
+local ZOrder = require("code/components/zOrder").ZOrder
 
 local module = {}
 
-module.DrawWorldSystem = tinyECS.processingSystem(class('systems/drawWorld'))
+module.DrawWorldSystem = tinyECS.sortedProcessingSystem(class('systems/drawWorld'))
 
 function module.DrawWorldSystem:initialize()
     self.canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
@@ -20,6 +21,11 @@ end
 
 function module.DrawWorldSystem:filter(entity)
     return entity[Position] and (entity[Circle] or entity[Rectangle] or entity[Light] or entity[Image])
+end
+
+function module.DrawWorldSystem:compare(entity1, entity2)
+    local order1, order2 = entity1[ZOrder], entity2[ZOrder]
+    return (not order1 and order2) or (order1 and order2 and order1.layer < order2.layer)
 end
 
 function module.DrawWorldSystem:preProcess()

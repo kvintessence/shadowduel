@@ -1,10 +1,13 @@
 local class = require("lib/middleclass")
 local tinyECS = require("lib/tiny-ecs")
 
+local globals = require("code/globals")
+
 local Position = require("code/components/position").Position
 local FootprintSource = require("code/components/footprintSource").FootprintSource
 local DecayingObject = require("code/components/decayingObject").DecayingObject
 local Image = require("code/components/image").Image
+local ZOrder = require("code/components/zOrder").ZOrder
 
 local module = {}
 
@@ -42,6 +45,7 @@ function module.FootprintHandler:process(entity, delta)
             [Position] = Position:new({ x = x, y = y, rotation = angle }),
             [Image] = Image:new({ image = self.footprintImage, scale = 0.2 }),
             [DecayingObject] = DecayingObject:new({ lifetime = 5 }),
+            [ZOrder] = ZOrder:new({ layer = globals.layers.footprints }),
         })
     end
 
