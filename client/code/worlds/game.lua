@@ -11,6 +11,7 @@ local SecondPlayerFinderSystem = require("code/systems/secondPlayerFinder").Seco
 local BodyControllerSystem = require("code/systems/bodyController").BodyControllerSystem
 local PointCameraAtPlayerSystem = require("code/systems/pointCameraAtPlayer").PointCameraAtPlayerSystem
 
+local Line = require("code/components/line").Line
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
 local Position = require("code/components/position").Position
@@ -21,14 +22,42 @@ local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local ControlledBody = require("code/components/controlledBody").ControlledBody
 
 -------------------
+
+local worldWidth, worldHeight = 1600, 1200
+local worldGap = 250
+
 local setupCamera = function()
-    local worldWidth, worldHeight = 800, 600
-    local worldGap = 250
     globals.camera = gamera.new(-worldGap, -worldGap, worldWidth + 2 * worldGap, worldHeight + 2 * worldGap)
 end
 
 local spawnWorldWalls = function()
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 0, y = 0 }),
+        [Line] = Line:new({ x1 = 0, y1 = 0, x2 = worldWidth, y2 = 0 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
 
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 0, y = 0 }),
+        [Line] = Line:new({ x1 = 0, y1 = 0, x2 = 0, y2 = worldHeight }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 0, y = 0 }),
+        [Line] = Line:new({ x1 = worldWidth, y1 = 0, x2 = worldWidth, y2 = worldHeight }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 0, y = 0 }),
+        [Line] = Line:new({ x1 = 0, y1 = worldHeight, x2 = worldWidth, y2 = worldHeight }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
 end
 
 local spawnWorldObstacles = function()
@@ -56,11 +85,11 @@ end
 
 local spawnWorldVisuals = function()
     local floorImage = love.graphics.newImage("assets/floor.png")
-    local floorImageQuad = love.graphics.newQuad(0, 0, 800, 600, floorImage:getDimensions())
+    local floorImageQuad = love.graphics.newQuad(0, 0, worldWidth, worldHeight, floorImage:getDimensions())
     floorImage:setWrap("repeat", "repeat")
 
     tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 400, y = 300 }),
+        [Position] = Position:new({ x = worldWidth / 2, y = worldHeight / 2 }),
         [Image] = Image:new({ image = floorImage, quad = floorImageQuad }),
     })
 end
