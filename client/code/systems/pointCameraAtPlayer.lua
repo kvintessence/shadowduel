@@ -4,7 +4,7 @@ local tinyECS = require("lib/tiny-ecs")
 local globals = require("code/globals")
 
 local Position = require("code/components/position").Position
-local ControlledBody = require("code/components/controlledBody").ControlledBody
+local Player = require("code/components/player").Player
 
 local module = {}
 
@@ -14,8 +14,7 @@ function module.PointCameraAtPlayerSystem:initialize()
 end
 
 function module.PointCameraAtPlayerSystem:filter(entity)
-    -- TODO: maybe `player` instead of controlled body?
-    return entity[Position] and entity[ControlledBody]
+    return entity[Position] and entity[Player] and entity[Player].localPlayer
 end
 
 function module.PointCameraAtPlayerSystem:process(entity)

@@ -6,6 +6,7 @@ local globals = require("code/globals")
 local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local Position = require("code/components/position").Position
 local ControlledBody = require("code/components/controlledBody").ControlledBody
+local Player = require("code/components/player").Player
 
 local module = {}
 
@@ -15,7 +16,7 @@ function module.BodyControllerSystem:initialize()
 end
 
 function module.BodyControllerSystem:filter(entity)
-    return entity[PhysicalBody] and entity[Position] and entity[ControlledBody]
+    return entity[PhysicalBody] and entity[Position] and entity[ControlledBody] and entity[Player]
 end
 
 function module.BodyControllerSystem:process(entity, delta)
@@ -37,7 +38,7 @@ function module.BodyControllerSystem:process(entity, delta)
     end
     if love.keyboard.isScancodeDown('lshift') or love.keyboard.isScancodeDown('rshift') then
         force = force * 2.5
-        entity[ControlledBody].running = true
+        entity[Player].running = true
     end
 
     local collider = entity[PhysicalBody].collider

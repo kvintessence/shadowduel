@@ -24,6 +24,7 @@ local LightFade = require("code/components/lightFade").LightFade
 local Image = require("code/components/image").Image
 local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local ControlledBody = require("code/components/controlledBody").ControlledBody
+local Player = require("code/components/player").Player
 
 -------------------
 
@@ -122,6 +123,7 @@ local spawnPlayers = function()
         [Circle] = Circle:new({ radius = 25 }),
         [PhysicalBody] = PhysicalBody:new({ type = "dynamic" }),
         [ControlledBody] = ControlledBody:new(),
+        [Player] = Player:new({ localPlayer = true }),
     })
 end
 
