@@ -17,6 +17,9 @@ local FootprintHandler = require("code/systems/footprintHandler").FootprintHandl
 local DecayingObjectHandlerSystem = require("code/systems/decayingObjectHandler").DecayingObjectHandlerSystem
 local SoundWaveDrawerSystem = require("code/systems/soundWaveDrawer").SoundWaveDrawerSystem
 
+local NetworkInputReceiverSystem = require("code/systems/networkInputReceiver").NetworkInputReceiverSystem
+local NetworkOutputSenderSystem = require("code/systems/networkOutputSender").NetworkOutputSenderSystem
+
 local Line = require("code/components/line").Line
 local Circle = require("code/components/circle").Circle
 local Rectangle = require("code/components/rectangle").Rectangle
@@ -31,6 +34,9 @@ local ControlledBody = require("code/components/controlledBody").ControlledBody
 local Player = require("code/components/player").Player
 local FootprintSource = require("code/components/footprintSource").FootprintSource
 local ZOrder = require("code/components/zOrder").ZOrder
+
+local NetworkOutput = require("code/components/networkOutput").NetworkOutput
+local NetworkInput = require("code/components/networkInput").NetworkInput
 
 -------------------
 
@@ -133,11 +139,33 @@ local spawnPlayers = function()
 
         [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
         [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
+
+        [NetworkOutput] = NetworkOutput:new({ name = "anotherPlayer" })
     })
-end
+
+    tinyECS.addEntity(globals.world, {
+        [Light] = Light:new({ radiance = 1200, maxRadiance = 1200, red = 50, green = 100, blue = 250 }),
+        [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 1200 }),
+        [LightSwitch] = LightSwitch:new({ darkness = 160, brightness = 1200 }),
+
+        [Position] = Position:new({ x = 850, y = 450 }),
+        [Image] = Image:new({ filename = "assets/char_fish.png", scale = 0.5 }),
+
+        [Circle] = Circle:new({ radius = 35 }),
+        [PhysicalBody] = PhysicalBody:new({ type = "dynamic" }),
+        [Player] = Player:new({ localPlayer = false }),
+
+        [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
+        [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
+
+        [NetworkInput] = NetworkInput:new({ name = "anotherPlayer" })
+    })end
 
 local createWorld = function()
     globals.world = tinyECS.world()
+
+    tinyECS.addSystem(globals.world, NetworkInputReceiverSystem:new())
+    tinyECS.addSystem(globals.world, NetworkOutputSenderSystem:new())
 
     tinyECS.addSystem(globals.world, BodyControllerSystem:new())
     tinyECS.addSystem(globals.world, PhysicsSystem:new())
@@ -154,7 +182,7 @@ local createWorld = function()
     tinyECS.addSystem(globals.world, WorldDrawerSystem:new())
     --tinyECS.addSystem(globals.world, FOVDrawerSystem:new(occluders))
 
-    --tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
+    tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
 
     tinyECS.addSystem(globals.world, SoundWaveDrawerSystem:new())
 
