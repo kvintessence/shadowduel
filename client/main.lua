@@ -14,7 +14,7 @@ function love.update(dt)
     local fps = "FPS:" .. love.timer.getFPS()
     local systemCount = ", systems: " .. tinyECS.getSystemCount(globals.world)
     local entityCount = ", entities: " .. tinyECS.getEntityCount(globals.world)
-    love.window.setTitle(fps .. systemCount .. entityCount)
+    love.window.setTitle("DEEP WATER (" .. fps .. systemCount .. entityCount .. ")")
 end
 
 function love.draw()
