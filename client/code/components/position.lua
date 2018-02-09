@@ -1,4 +1,5 @@
 local class = require("lib/middleclass")
+local json = require("lib/json")
 
 local module = {}
 
@@ -17,6 +18,20 @@ end
 
 function module.Position:get()
     return self.x, self.y
+end
+
+function module.Position:serialize()
+    return {
+        x = self.x,
+        y = self.y,
+        rotation = self.rotation,
+    }
+end
+
+function module.Position:deserialize(value)
+    self.x = value.x or self.x
+    self.y = value.y or self.y
+    self.rotation = value.rotation or self.rotation
 end
 
 return module

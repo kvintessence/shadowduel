@@ -4,8 +4,6 @@ local json = require("lib/json")
 
 local globals = require("code/globals")
 
-local Position = require("code/components/position").Position
-local PhysicalBody = require("code/components/physicalBody").PhysicalBody
 local NetworkOutput = require("code/components/networkOutput").NetworkOutput
 
 local module = {}
@@ -22,39 +20,16 @@ function module.NetworkOutputSenderSystem:process(entity)
         return
     end
 
-    if entity[Position] then
-        local x, y = entity[Position]:get()
-        local rotation = entity[Position].rotation
-        local encodedData = json:encode({
-            name = name,
-            component = "Position",
-            x = x,
-            y = y,
-            rotation = rotation,
-        })
+    for _, component in ipairs(entity[NetworkOutput].sync) do
+        if entity[component] and entity[component].serialize then
+            local serializedData = entity[component]:serialize()
+            serializedData.entityName = name
+            serializedData.componentName = component.name
 
-        local result, errorMessage = globals.socket:send(encodedData .. "\n")
-        if not result then
-            print("Couldn't send data: ", errorMessage)
-        end
-    end
-
-    if entity[PhysicalBody] then
-        local collider = entity[PhysicalBody].collider
-        local linearVelocityX, linearVelocityY = collider:getLinearVelocity()
-
-        local encodedData = json:encode({
-            name = name,
-            component = "PhysicalBody",
-            x = collider:getX(),
-            y = collider:getY(),
-            linearVelocityX = linearVelocityX,
-            linearVelocityY = linearVelocityY,
-        })
-
-        local result, errorMessage = globals.socket:send(encodedData .. "\n")
-        if not result then
-            print("Couldn't send data: ", errorMessage)
+            local result, errorMessage = globals.socket:send(json:encode(serializedData) .. "\n")
+            if not result then
+                print("Couldn't send data: ", errorMessage)
+            end
         end
     end
 end

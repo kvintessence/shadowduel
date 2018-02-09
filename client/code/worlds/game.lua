@@ -140,7 +140,7 @@ local spawnPlayers = function()
         [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
         [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
 
-        [NetworkOutput] = NetworkOutput:new({ name = "anotherPlayer" })
+        [NetworkOutput] = NetworkOutput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody } })
     })
 
     tinyECS.addEntity(globals.world, {
@@ -158,8 +158,9 @@ local spawnPlayers = function()
         [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
         [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
 
-        [NetworkInput] = NetworkInput:new({ name = "anotherPlayer" })
-    })end
+        [NetworkInput] = NetworkInput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody } })
+    })
+end
 
 local createWorld = function()
     globals.world = tinyECS.world()

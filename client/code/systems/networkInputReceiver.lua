@@ -58,21 +58,15 @@ function module.NetworkInputReceiverSystem:update()
             goto networkStart
         end
 
-        local entity = self.entitiesByName[decodedData.name]
+        local entity = self.entitiesByName[decodedData.entityName]
         if not entity then
-            print("Got info about non-existent entity: ", decodedData.name)
+            print("Got info about non-existent entity: ", decodedData.entityName)
             goto networkStart
         end
 
-        if decodedData.component == "Position" and entity[Position] then
-            local position = entity[Position]
-            position:set(decodedData.x, decodedData.y)
-            position.rotation = decodedData.rotation
-        elseif decodedData.component == "PhysicalBody" and entity[PhysicalBody] then
-            local collider = entity[PhysicalBody].collider
-            collider:setX(decodedData.x)
-            collider:setY(decodedData.y)
-            collider:setLinearVelocity(decodedData.linearVelocityX, decodedData.linearVelocityY)
+        local component = entity[NetworkInput]:componentByName(decodedData.componentName)
+        if component and entity[component] then
+            entity[component]:deserialize(decodedData)
         end
     end
 end
