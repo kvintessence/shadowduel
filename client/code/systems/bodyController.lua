@@ -39,6 +39,8 @@ function module.BodyControllerSystem:process(entity, delta)
     if love.keyboard.isScancodeDown('lshift') or love.keyboard.isScancodeDown('rshift') then
         force = force * 2.5
         entity[Player].running = true
+    else
+        entity[Player].running = false
     end
 
     local collider = entity[PhysicalBody].collider
