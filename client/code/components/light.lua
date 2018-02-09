@@ -147,6 +147,10 @@ function module.Light:update(x, y, drawOccludersFn)
 end
 
 function module.Light:draw(x, y)
+    if self.radiance < 5 then
+        return
+    end
+
     local left, top = leftTopLightingBoxPosition(self, x, y)
     local lightBoxQuad = love.graphics.newQuad(0, 0, self.radiance, self.radiance, self.lightRenderCanvas:getDimensions())
 

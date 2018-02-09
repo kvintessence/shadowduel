@@ -21,6 +21,7 @@ function module.AutonomyPresentationSystem:initialize()
     self.loveLogoKeyPressed = false
 
     self.fovKeyPressed = false
+    self.physicsPressed = false
 end
 
 function module.AutonomyPresentationSystem:update(delta)
@@ -28,6 +29,7 @@ function module.AutonomyPresentationSystem:update(delta)
     self:updateMusicVolume()
     self:updateLoveLogo()
     self:updateFOV()
+    self:updatePhysics()
 end
 
 function module.AutonomyPresentationSystem:updateMusicState()
@@ -85,6 +87,17 @@ function module.AutonomyPresentationSystem:updateFOV()
     end
 
     self.fovKeyPressed = fovKeyPressed
+end
+
+function module.AutonomyPresentationSystem:updatePhysics()
+    local physicsPressed = love.keyboard.isScancodeDown('p')
+
+    if physicsPressed and not self.physicsPressed then
+        self.physicsPressed = not self.physicsPressed
+        globals.drawPhysics = not globals.drawPhysics
+    end
+
+    self.physicsPressed = physicsPressed
 end
 
 return module

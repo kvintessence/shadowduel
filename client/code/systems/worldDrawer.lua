@@ -51,7 +51,14 @@ function module.drawEntity(entity, drawPrimitives)
     elseif drawPrimitives and entity[Rectangle] then
         local rectangle = entity[Rectangle]
         local position = entity[Position]
-        love.graphics.rectangle("fill", position.x - rectangle.width / 2, position.y - rectangle.height / 2, rectangle.width, rectangle.height)
+
+        love.graphics.push()
+        love.graphics.translate(position.x, position.y)
+        love.graphics.rotate(position.rotation)
+
+        love.graphics.rectangle("fill", 0 - rectangle.width / 2, 0 - rectangle.height / 2, rectangle.width, rectangle.height)
+
+        love.graphics.pop()
     elseif drawPrimitives and entity[Line] then
         local line = entity[Line]
         love.graphics.line(line.x1, line.y1, line.x2, line.y2)

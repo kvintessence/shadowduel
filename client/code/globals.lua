@@ -3,13 +3,15 @@ return {
     world = nil,
     socket = nil,
 
-    drawPhysics = false,
+    drawPhysics = true,
     drawFOV = false,
 
     layers = {
-        player = 3,
-        sound = 2,
-        footprints = 1,
+        localPlayer = 500,
+        otherPlayer = 400,
+        sound = 300,
+        surroundings = 200,
+        footprints = 100,
         background = 0,
     }
 }

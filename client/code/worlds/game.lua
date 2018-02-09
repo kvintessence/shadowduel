@@ -78,95 +78,78 @@ local spawnWorldWalls = function()
     })
 end
 
+local spawnBox = function(x, y, w, h, r)
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = x, y = y, rotation = r or 0 }),
+        [Rectangle] = Rectangle:new({ width = w, height = h }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+end
+
+local spawnCircle = function(x, y, r)
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = x, y = y }),
+        [Circle] = Circle:new({ radius = r }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+end
+
 local spawnWorldObstacles = function()
 
     --- CENTER WALLS ---
 
-    -- top left H
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 - 200, y = 600 - 200 }),
-        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    spawnBox(800 - 200, 600 - 200, 300 ,50) -- top left H
+    spawnBox(800 + 200, 600 - 200, 300 ,50) -- top right H
 
-    -- top right H
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 + 200, y = 600 - 200 }),
-        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    spawnBox(800 - 325, 600 - 150, 50, 150) -- top left V
+    spawnBox(800 + 325, 600 - 150, 50, 150) -- top right V
 
-    -- top left V
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 - 325, y = 600 - 150 }),
-        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    spawnBox(800 - 325, 600 + 100, 50, 150) -- bottom left V
+    spawnBox(800 + 325, 600 + 100, 50, 150) -- bottom right V
 
-    -- top right V
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 + 325, y = 600 - 150 }),
-        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    spawnBox(800 - 200, 600 + 200, 300, 50) -- bottom left H
+    spawnBox(800 + 200, 600 + 200, 300, 50) -- bottom right H
 
-    -- bottom left V
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 - 325, y = 600 + 100 }),
-        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    --- TOP LEFT OBJECTS ---
 
-    -- bottom right V
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 + 325, y = 600 + 100 }),
-        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    spawnCircle(300, 200, 100)
+    spawnBox(750, 150, 200, 60, 0.3)
+    spawnBox(200, 500, 200, 60, 0.7)
 
-    -- bottom left H
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 - 200, y = 600 + 200 }),
-        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    --- BOTTOM LEFT OBJECTS ---
 
-    -- bottom right H
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 800 + 200, y = 600 + 200 }),
-        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    spawnCircle(375, 900, 60)
+    spawnCircle(600, 1200, 120)
+    spawnBox(170, 900, 200, 60, 1.3)
 
-    --- OTHER ---
+    --- BOTTOM RIGHT OBJECTS ---
 
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 300, y = 100 }),
-        [Circle] = Circle:new({ radius = 25 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    spawnBox(900, 1050, 80, 80, 1.3)
+    spawnBox(1100, 1000, 80, 80, 0.3)
+    spawnBox(1300, 1050, 80, 80, 0.7)
+    spawnBox(1420, 900, 80, 80, 2.7)
+    spawnBox(1300, 700, 80, 80, 2.1)
+    spawnBox(1570, 750, 80, 80, 2.1)
 
-    tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 200, y = 200 }),
-        [Rectangle] = Rectangle:new({ width = 50, height = 75 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
-    })
+    --- TOP RIGHT OBJECTS ---
 
+    spawnBox(1450, 150, 60, 60, 0)
+    spawnBox(1300, 150, 60, 60, 0)
+    spawnBox(1300, 300, 60, 60, 0)
+    spawnBox(1450, 300, 60, 60, 0)
+
+end
+
+local coralImage = love.graphics.newImage("assets/obj_lantern.png")
+
+local spawnCoral = function(x, y, radiance, rotation)
     tinyECS.addEntity(globals.world, {
-        [Position] = Position:new({ x = 300, y = 300 }),
-        [Rectangle] = Rectangle:new({ width = 75, height = 35 }),
-        [Occluder] = Occluder:new(),
-        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+        [Image] = Image:new({ image = coralImage, scale = 0.7 }),
+        [Light] = Light:new({ radiance = radiance, maxRadiance = radiance }),
+        [Position] = Position:new({ x = x, y = y, rotation = rotation or 0 }),
+        [ZOrder] = ZOrder:new({ layer = globals.layers.surroundings }),
     })
 end
 
@@ -179,18 +162,10 @@ local spawnWorldVisuals = function()
         [Position] = Position:new({ x = worldWidth / 2, y = worldHeight / 2 }),
         [Image] = Image:new({ image = floorImage, quad = floorImageQuad }),
     })
-end
 
-local spawnWorldLights = function()
-    tinyECS.addEntity(globals.world, {
-        [Light] = Light:new({ radiance = 500, maxRadiance = 950, red = 250, green = 100, blue = 50 }),
-        [Position] = Position:new({ x = 250, y = 150 }),
-    })
-
-    tinyECS.addEntity(globals.world, {
-        [Light] = Light:new({ radiance = 600, maxRadiance = 950, red = 50, green = 255, blue = 150 }),
-        [Position] = Position:new({ x = 450, y = 350 }),
-    })
+    spawnCoral(700, 300, 700, 0.8)
+    spawnCoral(320, 750, 800, 0.2)
+    spawnCoral(1140, 890, 400, 1.3)
 end
 
 local spawnPlayers = function()
@@ -208,7 +183,7 @@ local spawnPlayers = function()
         [Player] = Player:new({ localPlayer = true }),
 
         [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
-        [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
+        [ZOrder] = ZOrder:new({ layer = globals.layers.localPlayer }),
 
         [NetworkOutput] = NetworkOutput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody, Player, Light } })
     })
@@ -224,7 +199,7 @@ local spawnPlayers = function()
         [Player] = Player:new({ localPlayer = false }),
 
         [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
-        [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
+        [ZOrder] = ZOrder:new({ layer = globals.layers.otherPlayer }),
 
         [NetworkInput] = NetworkInput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody, Player, Light } })
     })
@@ -267,7 +242,6 @@ local createWorld = function()
     spawnWorldWalls()
     spawnWorldObstacles()
     spawnWorldVisuals()
-    spawnWorldLights()
 
     spawnPlayers()
 end
