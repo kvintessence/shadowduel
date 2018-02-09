@@ -79,6 +79,75 @@ local spawnWorldWalls = function()
 end
 
 local spawnWorldObstacles = function()
+
+    --- CENTER WALLS ---
+
+    -- top left H
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 - 200, y = 600 - 200 }),
+        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    -- top right H
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 + 200, y = 600 - 200 }),
+        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    -- top left V
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 - 325, y = 600 - 150 }),
+        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    -- top right V
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 + 325, y = 600 - 150 }),
+        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    -- bottom left V
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 - 325, y = 600 + 100 }),
+        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    -- bottom right V
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 + 325, y = 600 + 100 }),
+        [Rectangle] = Rectangle:new({ width = 50, height = 150 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    -- bottom left H
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 - 200, y = 600 + 200 }),
+        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    -- bottom right H
+    tinyECS.addEntity(globals.world, {
+        [Position] = Position:new({ x = 800 + 200, y = 600 + 200 }),
+        [Rectangle] = Rectangle:new({ width = 300, height = 50 }),
+        [Occluder] = Occluder:new(),
+        [PhysicalBody] = PhysicalBody:new({ type = "static" }),
+    })
+
+    --- OTHER ---
+
     tinyECS.addEntity(globals.world, {
         [Position] = Position:new({ x = 300, y = 100 }),
         [Circle] = Circle:new({ radius = 25 }),
@@ -130,7 +199,7 @@ local spawnPlayers = function()
         [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 1200 }),
         [LightSwitch] = LightSwitch:new({ darkness = 0, brightness = 1200 }),
 
-        [Position] = Position:new({ x = 450, y = 250 }),
+        [Position] = Position:new({ x = 800, y = 600 }),
         [Image] = Image:new({ filename = "assets/char_fish.png", scale = 0.5 }),
 
         [Circle] = Circle:new({ radius = 35 }),
@@ -147,7 +216,7 @@ local spawnPlayers = function()
     tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 1200, maxRadiance = 1200, red = 50, green = 100, blue = 250 }),
 
-        [Position] = Position:new({ x = 450, y = 250 }),
+        [Position] = Position:new({ x = 800, y = 600 }),
         [Image] = Image:new({ filename = "assets/char_fish.png", scale = 0.5 }),
 
         [Circle] = Circle:new({ radius = 35 }),
@@ -163,7 +232,7 @@ local spawnPlayers = function()
     tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 160, maxRadiance = 160 }),
         [Position] = Position:new({ x = 450, y = 250 }),
-        [PhysicalBody] = localPlayer[PhysicalBody],  -- hacky way to add default light
+        [PhysicalBody] = localPlayer[PhysicalBody], -- hacky way to add default light
     })
 end
 

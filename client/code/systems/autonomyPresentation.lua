@@ -17,7 +17,7 @@ function module.AutonomyPresentationSystem:initialize()
     self.music:setVolume(self.musicVolume)
 
     self.loveLogo = love.graphics.newImage("assets/love_logo.png")
-    self.loveLogoActive = true
+    self.loveLogoActive = false
     self.loveLogoKeyPressed = false
 
     self.fovKeyPressed = false
