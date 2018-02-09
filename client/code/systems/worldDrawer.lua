@@ -43,7 +43,11 @@ function module.drawEntity(entity, drawPrimitives)
     elseif drawPrimitives and entity[Circle] then
         local circle = entity[Circle]
         local position = entity[Position]
-        love.graphics.circle("fill", position.x, position.y, circle.radius)
+
+        local previousLineWidth = love.graphics.getLineWidth()
+        love.graphics.setLineWidth(circle.lineWidth)
+        love.graphics.circle(circle.style, position.x, position.y, circle.radius)
+        love.graphics.setLineWidth(previousLineWidth)
     elseif drawPrimitives and entity[Rectangle] then
         local rectangle = entity[Rectangle]
         local position = entity[Position]
