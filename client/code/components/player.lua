@@ -10,4 +10,14 @@ function module.Player:initialize(parameters)
     self.running = false
 end
 
+function module.Player:serialize()
+    return {
+        running = self.running,
+    }
+end
+
+function module.Player:deserialize(value)
+    self.running = value.running or self.running
+end
+
 return module
