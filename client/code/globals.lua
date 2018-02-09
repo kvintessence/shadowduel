@@ -4,6 +4,7 @@ return {
     socket = nil,
 
     drawPhysics = false,
+    drawFOV = false,
 
     layers = {
         player = 3,

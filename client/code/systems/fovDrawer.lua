@@ -24,6 +24,10 @@ function module.FOVDrawerSystem:filter(entity)
 end
 
 function module.FOVDrawerSystem:preProcess()
+    if not globals.drawFOV then
+        return
+    end
+
     love.graphics.setColor(255, 255, 255)
 
     local screenWidth, screenHeight = love.graphics.getDimensions()
@@ -52,6 +56,10 @@ function module.FOVDrawerSystem:onRemoveFromWorld(world)
 end
 
 function module.FOVDrawerSystem:process(entity)
+    if not globals.drawFOV then
+        return
+    end
+
     local lightPosition = entity[Position]
     self.fovLight[Position]:set(lightPosition.x, lightPosition.y)
 
@@ -67,6 +75,10 @@ function module.FOVDrawerSystem:process(entity)
 end
 
 function module.FOVDrawerSystem:postProcess()
+    if not globals.drawFOV then
+        return
+    end
+
     love.graphics.setCanvas(self.previousCanvas)
     love.graphics.setShader(self.applyLightShader)
 

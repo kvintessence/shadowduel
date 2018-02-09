@@ -15,11 +15,19 @@ function module.AutonomyPresentationSystem:initialize()
     self.musicVolume = 0.5
     self.musicVolumeKeyPressed = false
     self.music:setVolume(self.musicVolume)
+
+    self.loveLogo = love.graphics.newImage("assets/love_logo.png")
+    self.loveLogoActive = true
+    self.loveLogoKeyPressed = false
+
+    self.fovKeyPressed = false
 end
 
 function module.AutonomyPresentationSystem:update(delta)
     self:updateMusicState()
     self:updateMusicVolume()
+    self:updateLoveLogo()
+    self:updateFOV()
 end
 
 function module.AutonomyPresentationSystem:updateMusicState()
@@ -47,6 +55,36 @@ function module.AutonomyPresentationSystem:updateMusicVolume()
     end
 
     self.musicVolumeKeyPressed = love.keyboard.isScancodeDown(']') or love.keyboard.isScancodeDown('[')
+end
+
+function module.AutonomyPresentationSystem:updateLoveLogo()
+    local loveLogoKeyPressed = love.keyboard.isScancodeDown('l')
+
+    if loveLogoKeyPressed and not self.loveLogoKeyPressed then
+        self.loveLogoActive = not self.loveLogoActive
+    end
+
+    self.loveLogoKeyPressed = loveLogoKeyPressed
+
+    if self.loveLogoActive then
+        love.graphics.clear(255, 255, 255)
+        love.graphics.setColor(255, 255, 255)
+
+        local x, y = love.graphics.getWidth(), love.graphics.getHeight()
+        local w, h = self.loveLogo:getDimensions()
+        love.graphics.draw(self.loveLogo, x / 2 - w / 3, y / 2 - h / 2)
+    end
+end
+
+function module.AutonomyPresentationSystem:updateFOV()
+    local fovKeyPressed = love.keyboard.isScancodeDown('v')
+
+    if fovKeyPressed and not self.fovKeyPressed then
+        self.fovKeyPressed = not self.fovKeyPressed
+        globals.drawFOV = not globals.drawFOV
+    end
+
+    self.fovKeyPressed = fovKeyPressed
 end
 
 return module

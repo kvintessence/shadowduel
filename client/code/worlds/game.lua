@@ -186,7 +186,7 @@ local createWorld = function()
     local occluders = tinyECS.addSystem(globals.world, OccludersSystem:new())
     tinyECS.addSystem(globals.world, LightUpdaterSystem:new(occluders))
     tinyECS.addSystem(globals.world, WorldDrawerSystem:new())
-    --tinyECS.addSystem(globals.world, FOVDrawerSystem:new(occluders))
+    tinyECS.addSystem(globals.world, FOVDrawerSystem:new(occluders))
 
     tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
 
