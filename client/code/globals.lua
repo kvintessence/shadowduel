@@ -4,7 +4,8 @@ return {
     drawPhysics = false,
 
     layers = {
-        player = 2,
+        player = 3,
+        sound = 2,
         footprints = 1,
         background = 0,
     }

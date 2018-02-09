@@ -15,6 +15,7 @@ local BodyControllerSystem = require("code/systems/bodyController").BodyControll
 local PointCameraAtPlayerSystem = require("code/systems/pointCameraAtPlayer").PointCameraAtPlayerSystem
 local FootprintHandler = require("code/systems/footprintHandler").FootprintHandler
 local DecayingObjectHandlerSystem = require("code/systems/decayingObjectHandler").DecayingObjectHandlerSystem
+local SoundWaveDrawerSystem = require("code/systems/soundWaveDrawer").SoundWaveDrawerSystem
 
 local Line = require("code/components/line").Line
 local Circle = require("code/components/circle").Circle
@@ -130,7 +131,7 @@ local spawnPlayers = function()
         [ControlledBody] = ControlledBody:new(),
         [Player] = Player:new({ localPlayer = true }),
 
-        [FootprintSource] = FootprintSource:new({ requiredDistance = 80 }),
+        [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
         [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
     })
 end
@@ -154,6 +155,8 @@ local createWorld = function()
     --tinyECS.addSystem(globals.world, FOVDrawerSystem:new(occluders))
 
     --tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
+
+    tinyECS.addSystem(globals.world, SoundWaveDrawerSystem:new())
 
     setupCamera()
 

@@ -6,8 +6,13 @@ module.FootprintSource = class('components/footprintSource')
 
 function module.FootprintSource:initialize(parameters)
     parameters = parameters or {}
-    self.requiredDistance = parameters.requiredDistance or 50
-    self.currentDistance = 0
+
+    self.requiredFootprintDistance = parameters.requiredFootprintDistance or 50
+    self.currentFootprintDistance = 0
+
+    self.requiredSoundDistance = parameters.requiredSoundDistance or 100
+    self.currentSoundDistance = 0
+
     self.lastX = nil
     self.lastY = nil
     self.reverse = false
