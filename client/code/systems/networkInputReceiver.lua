@@ -49,6 +49,10 @@ function module.NetworkInputReceiverSystem:update()
             if networkError ~= "timeout" then
                 print("Couldn't receive network data: ", networkError)
             end
+            if networkError == "closed" then
+                globals.socket:close()
+                globals.socket = nil
+            end
             return
         end
 

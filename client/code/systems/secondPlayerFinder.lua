@@ -45,9 +45,13 @@ function module.SecondPlayerFinderSystem:initialize()
 
     -- listening socket setup
     self.listenPort = self.broadcastPort + 1
+
     self.listenSocket = socket.tcp()
     self.listenSocket:bind(getIpAddress(), self.listenPort)
-    --self.listenSocket:bind("*", self.listenPort)
+    self.listenSocket:close()
+
+    self.listenSocket = socket.tcp()
+    self.listenSocket:bind(getIpAddress(), self.listenPort)
     self.listenSocket:settimeout(0)
     self.listenSocket:listen(1)
 
@@ -56,6 +60,10 @@ function module.SecondPlayerFinderSystem:initialize()
 end
 
 function module.SecondPlayerFinderSystem:update(delta)
+    if globals.socket then
+        return
+    end
+
     local currentTime = love.timer.getTime()
 
     self:checkIncomingConnections()
@@ -71,11 +79,15 @@ function module.SecondPlayerFinderSystem:update(delta)
         return
     end
 
-    if self.foundClient then self.foundClient:close() end
+    if self.foundClient then
+        self.foundClient:close()
+    end
     self.acknowledgeTimeout = 0
     self.foundClient = nil
 
-    if self.connectingClient then self.connectingClient:close() end
+    if self.connectingClient then
+        self.connectingClient:close()
+    end
     self.connectingClient = nil
     self.connectingClientIp = nil
     self.connectingClientPort = nil
@@ -87,10 +99,18 @@ function module.SecondPlayerFinderSystem:update(delta)
 end
 
 function module.SecondPlayerFinderSystem:onRemoveFromWorld(world)
-    if self.broadcastOutputSocket then self.broadcastOutputSocket:close() end
-    if self.broadcastInputSocket then self.broadcastInputSocket:close() end
-    if self.listenSocket then self.listenSocket:close() end
-    if self.foundClient then self.foundClient:close() end
+    if self.broadcastOutputSocket then
+        self.broadcastOutputSocket:close()
+    end
+    if self.broadcastInputSocket then
+        self.broadcastInputSocket:close()
+    end
+    if self.listenSocket then
+        self.listenSocket:close()
+    end
+    if self.foundClient then
+        self.foundClient:close()
+    end
 end
 
 function module.SecondPlayerFinderSystem:sendBroadcastMessage()
@@ -107,7 +127,9 @@ end
 function module.SecondPlayerFinderSystem:checkInputMessages()
     local data, ip, port = self.broadcastInputSocket:receivefrom()
 
-    if self.connectingClient or self.foundClient then return end
+    if self.connectingClient or self.foundClient then
+        return
+    end
 
     if data and data == self.broadcastMessage then
         if ip ~= getIpAddress() then
@@ -122,7 +144,9 @@ function module.SecondPlayerFinderSystem:checkInputMessages()
 end
 
 function module.SecondPlayerFinderSystem:checkIncomingConnections()
-    if self.foundClient then return end
+    if self.foundClient then
+        return
+    end
 
     self.foundClient = self.listenSocket:accept()
 
@@ -155,7 +179,9 @@ function module.SecondPlayerFinderSystem:handleConnectingSocket()
 end
 
 function module.SecondPlayerFinderSystem:checkAcknowledgeMessage()
-    if not self.foundClient then return end
+    if not self.foundClient then
+        return
+    end
 
     local data = self.foundClient:receive()
 
@@ -165,7 +191,7 @@ function module.SecondPlayerFinderSystem:checkAcknowledgeMessage()
 
         local clientSocket = self.foundClient
         self.foundClient = nil
-        tinyECS.removeSystem(self.world, self)
+        --tinyECS.removeSystem(self.world, self)
         globals.socket = clientSocket  -- TODO: remove usage of global variable
     end
 end
