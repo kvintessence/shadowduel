@@ -23,7 +23,7 @@ function module.LightUpdaterSystem:process(entity)
 
     entity[Light]:update(lightPosition.x, lightPosition.y, function()
         for _, occluder in ipairs(self.occludersSystem.entities) do
-            worldDrawer.drawEntity(occluder)
+            worldDrawer.drawEntity(occluder, true)
         end
     end)
 end

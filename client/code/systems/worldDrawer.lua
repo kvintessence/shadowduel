@@ -15,7 +15,7 @@ local module = {}
 
 --- shared functions ---
 
-function module.drawEntity(entity)
+function module.drawEntity(entity, drawPrimitives)
     if entity[Image] then
         local image = entity[Image]
         local imageQuad = entity[Image].quad
@@ -40,15 +40,15 @@ function module.drawEntity(entity)
         if image.opacity then
             love.graphics.setColor(255, 255, 255)
         end
-    elseif entity[Circle] then
+    elseif drawPrimitives and entity[Circle] then
         local circle = entity[Circle]
         local position = entity[Position]
         love.graphics.circle("fill", position.x, position.y, circle.radius)
-    elseif entity[Rectangle] then
+    elseif drawPrimitives and entity[Rectangle] then
         local rectangle = entity[Rectangle]
         local position = entity[Position]
         love.graphics.rectangle("fill", position.x - rectangle.width / 2, position.y - rectangle.height / 2, rectangle.width, rectangle.height)
-    elseif entity[Line] then
+    elseif drawPrimitives and entity[Line] then
         local line = entity[Line]
         love.graphics.line(line.x1, line.y1, line.x2, line.y2)
     end

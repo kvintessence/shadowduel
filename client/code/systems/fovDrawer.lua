@@ -57,7 +57,7 @@ function module.FOVDrawerSystem:process(entity)
 
     self.fovLight[Light]:update(lightPosition.x, lightPosition.y, function()
         for _, occluder in ipairs(self.occludersSystem.entities) do
-            worldDrawer.drawEntity(occluder)
+            worldDrawer.drawEntity(occluder, true)
         end
     end)
 
