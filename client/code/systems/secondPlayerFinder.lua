@@ -163,11 +163,10 @@ function module.SecondPlayerFinderSystem:checkAcknowledgeMessage()
         local ip, port = self.foundClient:getpeername()
         print("Connected: [" .. ip .. ":" .. port .. "].")
 
-        -- TODO: return socket
         local clientSocket = self.foundClient
         self.foundClient = nil
         tinyECS.removeSystem(self.world, self)
-        return clientSocket
+        globals.socket = clientSocket  -- TODO: remove usage of global variable
     end
 end
 

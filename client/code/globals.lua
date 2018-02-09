@@ -1,6 +1,8 @@
 return {
     camera = nil,
     world = nil,
+    socket = nil,
+
     drawPhysics = false,
 
     layers = {
