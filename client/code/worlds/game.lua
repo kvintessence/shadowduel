@@ -16,6 +16,7 @@ local PointCameraAtPlayerSystem = require("code/systems/pointCameraAtPlayer").Po
 local FootprintHandler = require("code/systems/footprintHandler").FootprintHandler
 local DecayingObjectHandlerSystem = require("code/systems/decayingObjectHandler").DecayingObjectHandlerSystem
 local SoundWaveDrawerSystem = require("code/systems/soundWaveDrawer").SoundWaveDrawerSystem
+local AutonomyPresentationSystem = require("code/systems/autonomyPresentation").AutonomyPresentationSystem
 
 local NetworkInputReceiverSystem = require("code/systems/networkInputReceiver").NetworkInputReceiverSystem
 local NetworkOutputSenderSystem = require("code/systems/networkOutputSender").NetworkOutputSenderSystem
@@ -190,6 +191,7 @@ local createWorld = function()
     tinyECS.addSystem(globals.world, SecondPlayerFinderSystem:new())
 
     tinyECS.addSystem(globals.world, SoundWaveDrawerSystem:new())
+    tinyECS.addSystem(globals.world, AutonomyPresentationSystem:new())
 
     setupCamera()
 
