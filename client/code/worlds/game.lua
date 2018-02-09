@@ -140,13 +140,11 @@ local spawnPlayers = function()
         [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
         [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
 
-        [NetworkOutput] = NetworkOutput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody, Player } })
+        [NetworkOutput] = NetworkOutput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody, Player, Light } })
     })
 
     tinyECS.addEntity(globals.world, {
         [Light] = Light:new({ radiance = 1200, maxRadiance = 1200, red = 50, green = 100, blue = 250 }),
-        [LightFade] = LightFade:new({ linearSpeed = 300, percentageSpeed = 300, targetRadiance = 1200 }),
-        [LightSwitch] = LightSwitch:new({ darkness = 160, brightness = 1200 }),
 
         [Position] = Position:new({ x = 850, y = 450 }),
         [Image] = Image:new({ filename = "assets/char_fish.png", scale = 0.5 }),
@@ -158,7 +156,7 @@ local spawnPlayers = function()
         [FootprintSource] = FootprintSource:new({ requiredFootprintDistance = 80, requiredSoundDistance = 120 }),
         [ZOrder] = ZOrder:new({ layer = globals.layers.player }),
 
-        [NetworkInput] = NetworkInput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody, Player } })
+        [NetworkInput] = NetworkInput:new({ name = "anotherPlayer", sync = { Position, PhysicalBody, Player, Light } })
     })
 end
 

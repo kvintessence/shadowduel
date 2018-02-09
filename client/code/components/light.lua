@@ -27,6 +27,16 @@ function module.Light:initialize(parameters)
     self.lightRenderCanvas = self.occludersCanvas
 end
 
+function module.Light:serialize()
+    return {
+        radiance = self.radiance,
+    }
+end
+
+function module.Light:deserialize(value)
+    self.radiance = value.radiance or self.radiance
+end
+
 --- SETTERS / GETTERS ---
 
 function module.Light:setRadiance(radiance)
