@@ -38,6 +38,7 @@ function module.PhysicsSystem:onAdd(entity)
     end
 
     bodyComponent.collider:setType(bodyComponent.type)
+    bodyComponent.collider:setLinearDamping(bodyComponent.damping)
 end
 
 function module.PhysicsSystem:onRemove(entity)

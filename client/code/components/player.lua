@@ -6,7 +6,7 @@ module.Player = class('components/player')
 
 function module.Player:initialize(parameters)
     parameters = parameters or {}
-    self.localPlayer = parameters.localPlayer or true
+    self.localPlayer = parameters.localPlayer or false
     self.running = false
 end
 

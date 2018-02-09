@@ -16,7 +16,7 @@ function module.BodyControllerSystem:initialize()
 end
 
 function module.BodyControllerSystem:filter(entity)
-    return entity[PhysicalBody] and entity[Position] and entity[ControlledBody] and entity[Player]
+    return entity[PhysicalBody] and entity[Position] and entity[ControlledBody] and entity[Player] and entity[Player].localPlayer
 end
 
 function module.BodyControllerSystem:process(entity, delta)
@@ -44,7 +44,6 @@ function module.BodyControllerSystem:process(entity, delta)
     end
 
     local collider = entity[PhysicalBody].collider
-    collider:setLinearDamping(5.0)
     collider:applyForce(force * vectorX, force * vectorY)
 
     -- rotation
