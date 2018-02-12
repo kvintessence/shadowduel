@@ -3,7 +3,7 @@ return {
     world = nil,
     socket = nil,
 
-    drawPhysics = true,
+    drawPhysics = false,
     drawFOV = false,
 
     layers = {
